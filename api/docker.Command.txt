@@ -1,0 +1,27 @@
+#Redis
+docker run --name my-redis -d -p 6379:6379 redis
+  - Download `Another Redis Desktop Manager` and install.
+    - Host: 127.0.0.1
+    - PORT:6379
+
+#RabbitMQ
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+  - access the management interface at http://localhost:15672 with the default username and password (guest/guest).
+
+
+#Build Image
+docker build -t my-node-app:latest .
+
+#Run Container // Dev
+docker run -p 3000:3000 my-node-app:latest
+
+#Run Container // Prod
+docker run -p 8080:8080 my-node-app:latest
+
+#View Logs
+docker logs my-node-app:latest
+
+#Interactive Shells
+docker run -it <image_name> /bin/bash
+# Inside the container
+npm run start

@@ -1,0 +1,6 @@
+{
+	"watch": ["src", ".env"],
+	"ext": "js,ts,json",
+	"ignore": ["src/logs/*", "src/**/*.{spec,test}.ts"],
+	"exec": "'node --inspect=0.0.0.0:9229 -r ts-node/register -r tsconfig-paths/register' src/server.ts"
+}
