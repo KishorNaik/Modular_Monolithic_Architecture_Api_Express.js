@@ -29,7 +29,7 @@ export class HashPasswordService implements IHashPasswordService {
 
 			return new Ok(hashedPassword); // hashedPassword;
 		} catch (ex) {
-      return ResultExceptionFactory.error(StatusCodes.INTERNAL_SERVER_ERROR, ex.message);
+			return ResultExceptionFactory.error(StatusCodes.INTERNAL_SERVER_ERROR, ex.message);
 		}
 	}
 

@@ -77,7 +77,12 @@ const stream = {
 	},
 };
 
-const logConstruct = (className:string, methodName: string, message: string, data?: unknown | any): string => {
+const logConstruct = (
+	className: string,
+	methodName: string,
+	message: string,
+	data?: unknown | any
+): string => {
 	const logMessage = `className:${className} | Method:${methodName} | Message:${message} | Data: ${data !== undefined ? JSON.stringify(data) : ''}`;
 	return logMessage;
 };
