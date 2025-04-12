@@ -8,17 +8,17 @@ import {
 	modulesFederationPubSubConsumers,
 	modulesFederationRequestReplyConsumers,
 } from './modules';
+import { initializeDatabase } from '@kishornaik/mma_db';
 
 ValidateEnv();
 
-const testDB = (): Promise<void> => {
-	console.log('testDB Function');
-	return Promise.resolve();
+const mmaDb = async (): Promise<void> => {
+	await initializeDatabase;
 };
 
 const runServer = () => {
 	const app = new App([...modulesFederation]);
-	app.initializeDatabase();
+	app.initializeDatabase(mmaDb);
 	app.initializeAndRunPubSubRabbitMqConsumer(
 		[...modulesFederationPubSubConsumers],
 		pubSubConsumerRegistry.execute

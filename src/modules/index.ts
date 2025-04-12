@@ -1,5 +1,5 @@
-import { demoModule } from './demo';
+import { userModule } from './users';
 
-export const modulesFederation: Function[] = [...demoModule];
+export const modulesFederation: Function[] = [...userModule];
 export const modulesFederationPubSubConsumers: Function[] = [];
 export const modulesFederationRequestReplyConsumers: Function[] = [];
