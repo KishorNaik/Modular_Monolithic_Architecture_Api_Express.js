@@ -26,4 +26,4 @@ export const {
 	RATE_LIMITER,
 } = process.env;
 
-//Test
+const envTest:String;
