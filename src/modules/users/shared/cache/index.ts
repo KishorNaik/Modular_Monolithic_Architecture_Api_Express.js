@@ -14,7 +14,10 @@ import { StatusCodes } from 'http-status-codes';
 import { redisCacheCircuitBreaker, RedisHelper } from '@/shared/utils/helpers/redis';
 import medaitR from '@/shared/medaitR';
 import { DataResponse } from '@/shared/models/response/data.Response';
-import { GetUserByIdentifierDomainEventRequestDto, GetUserByIdentifierDomainEventResponseDto } from '../../apps/features/v1/getUsersByIdentifier/contracts/Index';
+import {
+	GetUserByIdentifierDomainEventRequestDto,
+	GetUserByIdentifierDomainEventResponseDto,
+} from '../../apps/features/v1/getUsersByIdentifier/contracts/Index';
 import { logConstruct, logger } from '@/shared/utils/helpers/loggers';
 import { sealed } from '@/shared/utils/decorators/sealed';
 import { GetUserByIdentifierDomainEventService } from '../../apps/features/v1/getUsersByIdentifier/events/domain/getUserByIdentifier';
@@ -24,7 +27,7 @@ Container.set<GetUserRowVersionService>(GetUserRowVersionService, new GetUserRow
 export interface IUserSharedCacheServiceParameters {
 	identifier: string;
 	status: StatusEnum;
-  queryRunner: QueryRunner;
+	queryRunner: QueryRunner;
 }
 
 export interface IUserSharedCacheServiceResult {
@@ -62,29 +65,32 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 			if (!params.identifier)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid identifier');
 
-			if (params.status===null)
+			if (params.status === null)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid status');
 
-      if(!params.queryRunner)
-        return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST,"invalid queryRunner");
+			if (!params.queryRunner)
+				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'invalid queryRunner');
 
-			const { identifier, status,queryRunner } = params;
+			const { identifier, status, queryRunner } = params;
 
 			// init Redis Cache
 			await this._redisHelper.init(true);
 
 			const cacheKey = `users_${identifier}`;
-      const cacheValueResult = await this._redisHelper.get(cacheKey);
+			const cacheValueResult = await this._redisHelper.get(cacheKey);
 			// const cacheValueResult = await redisCacheCircuitBreaker.fire(
 			// 	this._redisHelper,
 			// 	cacheKey
 			// );
 
-      if (cacheValueResult.isErr())
-        return ResultExceptionFactory.error(cacheValueResult.error.status, cacheValueResult.error.message);
+			if (cacheValueResult.isErr())
+				return ResultExceptionFactory.error(
+					cacheValueResult.error.status,
+					cacheValueResult.error.message
+				);
 
 			//const cacheValue: string = cacheValueResult;
-      const cacheValue: string = cacheValueResult.value;
+			const cacheValue: string = cacheValueResult.value;
 			if (!cacheValue) {
 				// Get User Data By Identifier
 				const userSetCacheServiceResult = await this._userSetCacheService.handleAsync({
@@ -92,7 +98,7 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 					status: status,
 					primaryCacheName: cacheKey,
 					isCached: true,
-          queryRunner:queryRunner
+					queryRunner: queryRunner,
 				});
 				if (userSetCacheServiceResult.isErr())
 					return ResultExceptionFactory.error(
@@ -129,7 +135,7 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 						status: status,
 						primaryCacheName: cacheKey,
 						isCached: true,
-            queryRunner: queryRunner,
+						queryRunner: queryRunner,
 					});
 					if (userSetCacheServiceResult.isErr())
 						return ResultExceptionFactory.error(
@@ -149,8 +155,7 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 		} catch (ex) {
 			const error = ex as Error;
 			return ResultExceptionFactory.error(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
-		}
-    finally {
+		} finally {
 			await this._redisHelper.disconnect();
 		}
 	}
@@ -159,7 +164,7 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 interface IGetUserByIdentifierDataServiceParameters {
 	identifier: string;
 	status: StatusEnum;
-  queryRunner: QueryRunner;
+	queryRunner: QueryRunner;
 	isCached?: boolean;
 }
 
@@ -172,14 +177,15 @@ interface IGetUserByIdentifierDataService
 @sealed
 @Service()
 class GetUserByIdentifierDataService implements IGetUserByIdentifierDataService {
+	private readonly _getUserByIdentifierDomainEventService: GetUserByIdentifierDomainEventService;
 
-  private readonly _getUserByIdentifierDomainEventService: GetUserByIdentifierDomainEventService;
+	public constructor() {
+		this._getUserByIdentifierDomainEventService = Container.get(
+			GetUserByIdentifierDomainEventService
+		);
+	}
 
-  public constructor(){
-    this._getUserByIdentifierDomainEventService = Container.get(GetUserByIdentifierDomainEventService);
-  }
-
-  public async handleAsync(
+	public async handleAsync(
 		params: IGetUserByIdentifierDataServiceParameters
 	): Promise<Result<IUserSharedCacheServiceResult, ResultError>> {
 		let isCached: boolean = false;
@@ -191,22 +197,26 @@ class GetUserByIdentifierDataService implements IGetUserByIdentifierDataService 
 			if (!params.identifier)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid identifier');
 
-			if (params.status===null)
+			if (params.status === null)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid status');
 
-      if(!params.queryRunner)
-        return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid query Runner');
+			if (!params.queryRunner)
+				return ResultExceptionFactory.error(
+					StatusCodes.BAD_REQUEST,
+					'Invalid query Runner'
+				);
 
 			// Get users data
-      const getUserByIdentifierDomainEventRequestDto:GetUserByIdentifierDomainEventRequestDto=new GetUserByIdentifierDomainEventRequestDto();
-      getUserByIdentifierDomainEventRequestDto.identifier=params.identifier;
-      getUserByIdentifierDomainEventRequestDto.status=params.status;
+			const getUserByIdentifierDomainEventRequestDto: GetUserByIdentifierDomainEventRequestDto =
+				new GetUserByIdentifierDomainEventRequestDto();
+			getUserByIdentifierDomainEventRequestDto.identifier = params.identifier;
+			getUserByIdentifierDomainEventRequestDto.status = params.status;
 
-
-			const getUserByIdentifierDomainEventResult = await this._getUserByIdentifierDomainEventService.handleAsync({
-        request:  getUserByIdentifierDomainEventRequestDto,
-        queryRunner: params.queryRunner
-      })
+			const getUserByIdentifierDomainEventResult =
+				await this._getUserByIdentifierDomainEventService.handleAsync({
+					request: getUserByIdentifierDomainEventRequestDto,
+					queryRunner: params.queryRunner,
+				});
 			if (getUserByIdentifierDomainEventResult.isErr())
 				return ResultExceptionFactory.error(
 					getUserByIdentifierDomainEventResult.error.status,
@@ -232,7 +242,7 @@ interface IUserSetCacheServiceParameters {
 	identifier: string;
 	status: StatusEnum;
 	primaryCacheName: string;
-  queryRunner: QueryRunner;
+	queryRunner: QueryRunner;
 	isCached?: boolean;
 }
 
@@ -261,16 +271,16 @@ class UserSetCacheService implements IUserSetCacheService {
 			if (!params.identifier)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid identifier');
 
-			if (params.status===null)
+			if (params.status === null)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid status');
 
 			if (!params.primaryCacheName)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid cache name');
 
-      if(!params.queryRunner)
-        return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST,"Invalid queryRunner");
+			if (!params.queryRunner)
+				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid queryRunner');
 
-			const { identifier, status, primaryCacheName,queryRunner } = params;
+			const { identifier, status, primaryCacheName, queryRunner } = params;
 
 			// Get User Data By Identifier
 			const getUserByIdentifierDataServiceResult =
@@ -278,7 +288,7 @@ class UserSetCacheService implements IUserSetCacheService {
 					identifier: identifier,
 					status: status,
 					isCached: false,
-          queryRunner:queryRunner
+					queryRunner: queryRunner,
 				});
 			if (getUserByIdentifierDataServiceResult.isErr())
 				return ResultExceptionFactory.error(

@@ -12,8 +12,8 @@ Container.set<GetUsersByIdentifierService>(
 );
 
 export interface IGetUserByIdentifierServiceParameters {
-  userEntity: UserEntity;
-  queryRunner?: QueryRunner;
+	userEntity: UserEntity;
+	queryRunner?: QueryRunner;
 }
 
 export interface IGetUsersByIdentifierDbService
@@ -28,20 +28,22 @@ export class GetUserByIdentifierDbService implements IGetUsersByIdentifierDbServ
 		this._getUserByIdentifierService = Container.get(GetUsersByIdentifierService);
 	}
 
-	public async handleAsync(params: IGetUserByIdentifierServiceParameters): Promise<Result<UserEntity, ResultError>> {
+	public async handleAsync(
+		params: IGetUserByIdentifierServiceParameters
+	): Promise<Result<UserEntity, ResultError>> {
 		try {
 			// @guard
 			if (!params)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid params');
 
-      if(!params.userEntity)
-        return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid params')
+			if (!params.userEntity)
+				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid params');
 
 			// Db Service
 			const getUserByIdentifierServiceResult =
 				await this._getUserByIdentifierService.handleAsync({
 					userEntity: params.userEntity,
-          queryRunner: params.queryRunner,
+					queryRunner: params.queryRunner,
 				});
 			if (getUserByIdentifierServiceResult.isErr())
 				return ResultExceptionFactory.error(

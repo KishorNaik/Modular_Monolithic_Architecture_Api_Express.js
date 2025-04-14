@@ -48,7 +48,7 @@ export class CreateUserController {
 	@OpenAPI({ summary: 'Create User', tags: ['users'] })
 	@HttpCode(StatusCodes.OK)
 	@OnUndefined(StatusCodes.BAD_REQUEST)
-  @UseBefore(ValidationMiddleware(AesRequestDto))
+	@UseBefore(ValidationMiddleware(AesRequestDto))
 	public async createAsync(@Body() request: AesRequestDto, @Res() res: Response) {
 		const response = await mediatR.send(new CreateUserCommand(request));
 		return res.status(response.StatusCode).json(response);
@@ -86,9 +86,9 @@ export class CreateUserCommandHandler
 	private readonly _createUserKeysService: CreateUserKeysService;
 	private readonly _createUserMapEntityService: CreateUserMapEntityService;
 	private readonly _createUserDbService: CreateUserDbService;
-  private readonly _userSharedCacheService: UserSharedCacheService;
-  private readonly _createUserMapResponseService: CreateUserMapResponseService;
-  private readonly _createUserEncryptResponseService: CreateUserEncryptResponseService;
+	private readonly _userSharedCacheService: UserSharedCacheService;
+	private readonly _createUserMapResponseService: CreateUserMapResponseService;
+	private readonly _createUserEncryptResponseService: CreateUserEncryptResponseService;
 
 	public constructor() {
 		this._createUserDecryptRequestService = Container.get(CreateUserDecryptRequestService);
@@ -99,9 +99,9 @@ export class CreateUserCommandHandler
 		this._createUserKeysService = Container.get(CreateUserKeysService);
 		this._createUserMapEntityService = Container.get(CreateUserMapEntityService);
 		this._createUserDbService = Container.get(CreateUserDbService);
-    this._userSharedCacheService=Container.get(UserSharedCacheService);
-    this._createUserMapResponseService=Container.get(CreateUserMapResponseService);
-    this._createUserEncryptResponseService=Container.get(CreateUserEncryptResponseService);
+		this._userSharedCacheService = Container.get(UserSharedCacheService);
+		this._createUserMapResponseService = Container.get(CreateUserMapResponseService);
+		this._createUserEncryptResponseService = Container.get(CreateUserEncryptResponseService);
 	}
 
 	public async handle(value: CreateUserCommand): Promise<ApiDataResponse<AesResponseDto>> {
@@ -196,52 +196,62 @@ export class CreateUserCommandHandler
 				);
 			}
 
-      // Map Response Service
-      const createUserMapResponseServiceResult=await this._createUserMapResponseService.handleAsync(entity.entity.users);
-      if(createUserMapResponseServiceResult.isErr()){
-        await queryRunner.rollbackTransaction();
-        return DataResponseFactory.error(
-          createUserMapResponseServiceResult.error.status,
-          createUserMapResponseServiceResult.error.message
-        );
-      }
+			// Map Response Service
+			const createUserMapResponseServiceResult =
+				await this._createUserMapResponseService.handleAsync(entity.entity.users);
+			if (createUserMapResponseServiceResult.isErr()) {
+				await queryRunner.rollbackTransaction();
+				return DataResponseFactory.error(
+					createUserMapResponseServiceResult.error.status,
+					createUserMapResponseServiceResult.error.message
+				);
+			}
 
-      const createUserResponseDto:CreateUserResponseDto=createUserMapResponseServiceResult.value;
+			const createUserResponseDto: CreateUserResponseDto =
+				createUserMapResponseServiceResult.value;
 
-      // Encrypt Service
-      const createUserEncryptResponseServiceResult=await this._createUserEncryptResponseService.handleAsync({
-        data: createUserResponseDto,
-        key:ENCRYPTION_KEY
-      });
-      if(createUserEncryptResponseServiceResult.isErr()){
-        await queryRunner.rollbackTransaction();
-        return DataResponseFactory.error(
-          createUserEncryptResponseServiceResult.error.status,
-          createUserEncryptResponseServiceResult.error.message
-        );
-      }
+			// Encrypt Service
+			const createUserEncryptResponseServiceResult =
+				await this._createUserEncryptResponseService.handleAsync({
+					data: createUserResponseDto,
+					key: ENCRYPTION_KEY,
+				});
+			if (createUserEncryptResponseServiceResult.isErr()) {
+				await queryRunner.rollbackTransaction();
+				return DataResponseFactory.error(
+					createUserEncryptResponseServiceResult.error.status,
+					createUserEncryptResponseServiceResult.error.message
+				);
+			}
 
-      const aesResponseDto:AesResponseDto=createUserEncryptResponseServiceResult.value.aesResponseDto;
+			const aesResponseDto: AesResponseDto =
+				createUserEncryptResponseServiceResult.value.aesResponseDto;
 
-      // Shared Cache service
-      const userCachedSharedServiceResult=await this._userSharedCacheService.handleAsync({
-        identifier:createUserResponseDto.identifier,
-        status:StatusEnum.INACTIVE,
-        queryRunner:queryRunner
-      });
-      if(userCachedSharedServiceResult.isErr())
-      {
-        await queryRunner.rollbackTransaction();
-        return DataResponseFactory.error(userCachedSharedServiceResult.error.status,userCachedSharedServiceResult.error.message);
-      }
+			// Shared Cache service
+			const userCachedSharedServiceResult = await this._userSharedCacheService.handleAsync({
+				identifier: createUserResponseDto.identifier,
+				status: StatusEnum.INACTIVE,
+				queryRunner: queryRunner,
+			});
+			if (userCachedSharedServiceResult.isErr()) {
+				await queryRunner.rollbackTransaction();
+				return DataResponseFactory.error(
+					userCachedSharedServiceResult.error.status,
+					userCachedSharedServiceResult.error.message
+				);
+			}
 
-
-      await queryRunner.commitTransaction();
+			await queryRunner.commitTransaction();
 
 			// Domain Event Service
-        // Is Email Verification Notification Integration Event
+			// Is Email Verification Notification Integration Event
 
-      return DataResponseFactory.Response(true,StatusCodes.CREATED,aesResponseDto,"user created successfully");
+			return DataResponseFactory.Response(
+				true,
+				StatusCodes.CREATED,
+				aesResponseDto,
+				'user created successfully'
+			);
 		} catch (ex) {
 			const error = ex as Error;
 			if (queryRunner.isTransactionActive) {

@@ -46,7 +46,7 @@ export class CreateUserRequestDto {
 
 // @region Response dto
 export class CreateUserResponseDto {
-  public identifier?: string;
-  public clientId?: string;
+	public identifier?: string;
+	public clientId?: string;
 }
 // @endregion

@@ -105,7 +105,7 @@ export class CreateUserMapEntityService implements ICreateUserMapEntityService {
 			userCredentials.hash = params.hashPassword.hash;
 			userCredentials.salt = params.hashPassword.salt;
 			userCredentials.status = StatusEnum.INACTIVE;
-			userCredentials.username = userCommunication.email
+			userCredentials.username = userCommunication.email;
 			userCredentials.userId = userEntity.identifier;
 
 			const result: ICreateUserMapEntityServiceResult = {

@@ -110,7 +110,7 @@ export class CreateUserDbService implements ICreateUserDbService {
 					addUserCommunicationServiceResult.error.message
 				);
 
-      console.log(`cred: ${params.entity.entity.credentials}`);
+			console.log(`cred: ${params.entity.entity.credentials}`);
 
 			// Add User Credentials Service
 			const addUserCredentialsServiceResult =

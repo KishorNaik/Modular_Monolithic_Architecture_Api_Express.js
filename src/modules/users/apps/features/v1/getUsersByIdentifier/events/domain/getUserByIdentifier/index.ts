@@ -16,26 +16,29 @@ import { IServiceHandlerAsync } from '@/shared/utils/helpers/services';
 import { ResultError, ResultExceptionFactory } from '@/shared/utils/exceptions/results';
 import { Ok, Result } from 'neverthrow';
 
-export interface IGetUserByIdentifierDomainEventServiceParameters{
-  request:GetUserByIdentifierDomainEventRequestDto;
-  queryRunner?:QueryRunner;
+export interface IGetUserByIdentifierDomainEventServiceParameters {
+	request: GetUserByIdentifierDomainEventRequestDto;
+	queryRunner?: QueryRunner;
 }
 
-export interface IGetUserByIdentifierDomainEventService extends IServiceHandlerAsync<IGetUserByIdentifierDomainEventServiceParameters,GetUserByIdentifierDomainEventResponseDto>{
-
-}
+export interface IGetUserByIdentifierDomainEventService
+	extends IServiceHandlerAsync<
+		IGetUserByIdentifierDomainEventServiceParameters,
+		GetUserByIdentifierDomainEventResponseDto
+	> {}
 
 @sealed
 @Service()
-export class GetUserByIdentifierDomainEventService implements IGetUserByIdentifierDomainEventService{
-
-  private readonly _getUserByIdentifierDomainEventValidationService: GetUserByIdentifierDomainEventValidationService;
+export class GetUserByIdentifierDomainEventService
+	implements IGetUserByIdentifierDomainEventService
+{
+	private readonly _getUserByIdentifierDomainEventValidationService: GetUserByIdentifierDomainEventValidationService;
 	private readonly _getUserByIdentifierMapEntityService: GetUserByIdentifierMapEntityService;
 	private readonly _getUserByIdentifierDbService: GetUserByIdentifierDbService;
 	private readonly _getUserByIdentifiersDomainEventMapResponseService: GetUserByIdentifiersDomainEventMapResponseService;
 
-  public constructor(){
-    this._getUserByIdentifierDomainEventValidationService = Container.get(
+	public constructor() {
+		this._getUserByIdentifierDomainEventValidationService = Container.get(
 			GetUserByIdentifierDomainEventValidationService
 		);
 		this._getUserByIdentifierMapEntityService = Container.get(
@@ -45,14 +48,15 @@ export class GetUserByIdentifierDomainEventService implements IGetUserByIdentifi
 		this._getUserByIdentifiersDomainEventMapResponseService = Container.get(
 			GetUserByIdentifiersDomainEventMapResponseService
 		);
-  }
+	}
 
-  public async handleAsync(params: IGetUserByIdentifierDomainEventServiceParameters): Promise<Result<GetUserByIdentifierDomainEventResponseDto, ResultError>> {
-    try
-    {
-      // Guard
+	public async handleAsync(
+		params: IGetUserByIdentifierDomainEventServiceParameters
+	): Promise<Result<GetUserByIdentifierDomainEventResponseDto, ResultError>> {
+		try {
+			// Guard
 			if (!params)
-				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST,"InValid Request");
+				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'InValid Request');
 
 			// Validation
 			const getUserByIdentifierDomainEventValidationServiceResult =
@@ -77,16 +81,14 @@ export class GetUserByIdentifierDomainEventService implements IGetUserByIdentifi
 					getUserByIdentifierMapEntityServiceResult.error.message
 				);
 
-      let userEntity: UserEntity = getUserByIdentifierMapEntityServiceResult.value;
+			let userEntity: UserEntity = getUserByIdentifierMapEntityServiceResult.value;
 
 			// Db Service
 			const getUserByIdentifierDbServiceResult =
-				await this._getUserByIdentifierDbService.handleAsync(
-					{
-            userEntity:userEntity,
-            queryRunner: params.queryRunner
-          }
-				);
+				await this._getUserByIdentifierDbService.handleAsync({
+					userEntity: userEntity,
+					queryRunner: params.queryRunner,
+				});
 			if (getUserByIdentifierDbServiceResult.isErr())
 				return ResultExceptionFactory.error(
 					getUserByIdentifierDbServiceResult.error.status,
@@ -106,14 +108,13 @@ export class GetUserByIdentifierDomainEventService implements IGetUserByIdentifi
 					getUserByIdentifiersDomainEventMapResponseServiceResult.error.message
 				);
 
-      const response:GetUserByIdentifierDomainEventResponseDto=getUserByIdentifiersDomainEventMapResponseServiceResult.value
+			const response: GetUserByIdentifierDomainEventResponseDto =
+				getUserByIdentifiersDomainEventMapResponseServiceResult.value;
 
 			return new Ok(response);
-    }
-    catch(ex){
-      const error= ex as Error;
-      return ResultExceptionFactory.error(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
-    }
-  }
-
+		} catch (ex) {
+			const error = ex as Error;
+			return ResultExceptionFactory.error(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
+		}
+	}
 }
