@@ -11,6 +11,8 @@ export interface IUsers {
 	credentials?: IUserCredentials;
 	settings?: IUserSettings;
 	version?: number;
+  created_date?: Date;
+  modified_date?: Date;
 }
 
 export interface IUserCommunication {

@@ -25,7 +25,7 @@ import Container from 'typedi';
 import mediatR from '@/shared/medaitR/index';
 import { CreateUserDecryptRequestService } from './services/decryptRequest';
 import { CreateUserRequestValidationService } from './services/validationRequest';
-import { CreateUserRequestDto } from './contracts';
+import { CreateUserRequestDto, CreateUserResponseDto } from './contracts';
 import { CreateUserHashPasswordService } from './services/hashPassword';
 import { IHashPasswordResult } from '@/shared/services/users/user.HashPassword.Service';
 import { CreateUserKeysService, ICreateUserKeyServiceResult } from './services/keys';
@@ -33,8 +33,12 @@ import {
 	CreateUserMapEntityService,
 	ICreateUserMapEntityServiceResult,
 } from './services/mapEntity';
-import { getQueryRunner } from '@kishornaik/mma_db';
+import { getQueryRunner, StatusEnum } from '@kishornaik/mma_db';
 import { CreateUserDbService } from './services/db';
+import { UserSharedCacheService } from '@/modules/users/shared/cache';
+import { CreateUserMapResponseService } from './services/mapResponse';
+import { CreateUserEncryptResponseService } from './services/encryptResponse';
+import { ValidationMiddleware } from '@/middlewares/validation.middleware';
 
 // @region Controller
 @JsonController('/api/v1/users')
@@ -44,6 +48,7 @@ export class CreateUserController {
 	@OpenAPI({ summary: 'Create User', tags: ['users'] })
 	@HttpCode(StatusCodes.OK)
 	@OnUndefined(StatusCodes.BAD_REQUEST)
+  @UseBefore(ValidationMiddleware(AesRequestDto))
 	public async createAsync(@Body() request: AesRequestDto, @Res() res: Response) {
 		const response = await mediatR.send(new CreateUserCommand(request));
 		return res.status(response.StatusCode).json(response);
@@ -81,6 +86,9 @@ export class CreateUserCommandHandler
 	private readonly _createUserKeysService: CreateUserKeysService;
 	private readonly _createUserMapEntityService: CreateUserMapEntityService;
 	private readonly _createUserDbService: CreateUserDbService;
+  private readonly _userSharedCacheService: UserSharedCacheService;
+  private readonly _createUserMapResponseService: CreateUserMapResponseService;
+  private readonly _createUserEncryptResponseService: CreateUserEncryptResponseService;
 
 	public constructor() {
 		this._createUserDecryptRequestService = Container.get(CreateUserDecryptRequestService);
@@ -91,6 +99,9 @@ export class CreateUserCommandHandler
 		this._createUserKeysService = Container.get(CreateUserKeysService);
 		this._createUserMapEntityService = Container.get(CreateUserMapEntityService);
 		this._createUserDbService = Container.get(CreateUserDbService);
+    this._userSharedCacheService=Container.get(UserSharedCacheService);
+    this._createUserMapResponseService=Container.get(CreateUserMapResponseService);
+    this._createUserEncryptResponseService=Container.get(CreateUserEncryptResponseService);
 	}
 
 	public async handle(value: CreateUserCommand): Promise<ApiDataResponse<AesResponseDto>> {
@@ -185,11 +196,52 @@ export class CreateUserCommandHandler
 				);
 			}
 
+      // Map Response Service
+      const createUserMapResponseServiceResult=await this._createUserMapResponseService.handleAsync(entity.entity.users);
+      if(createUserMapResponseServiceResult.isErr()){
+        await queryRunner.rollbackTransaction();
+        return DataResponseFactory.error(
+          createUserMapResponseServiceResult.error.status,
+          createUserMapResponseServiceResult.error.message
+        );
+      }
+
+      const createUserResponseDto:CreateUserResponseDto=createUserMapResponseServiceResult.value;
+
+      // Encrypt Service
+      const createUserEncryptResponseServiceResult=await this._createUserEncryptResponseService.handleAsync({
+        data: createUserResponseDto,
+        key:ENCRYPTION_KEY
+      });
+      if(createUserEncryptResponseServiceResult.isErr()){
+        await queryRunner.rollbackTransaction();
+        return DataResponseFactory.error(
+          createUserEncryptResponseServiceResult.error.status,
+          createUserEncryptResponseServiceResult.error.message
+        );
+      }
+
+      const aesResponseDto:AesResponseDto=createUserEncryptResponseServiceResult.value.aesResponseDto;
+
+      // Shared Cache service
+      const userCachedSharedServiceResult=await this._userSharedCacheService.handleAsync({
+        identifier:createUserResponseDto.identifier,
+        status:StatusEnum.INACTIVE,
+        queryRunner:queryRunner
+      });
+      if(userCachedSharedServiceResult.isErr())
+      {
+        await queryRunner.rollbackTransaction();
+        return DataResponseFactory.error(userCachedSharedServiceResult.error.status,userCachedSharedServiceResult.error.message);
+      }
+
+
+      await queryRunner.commitTransaction();
+
 			// Domain Event Service
+        // Is Email Verification Notification Integration Event
 
-			// Is Email Verification Notification Integration Event
-
-			// Encrypt Service
+      return DataResponseFactory.Response(true,StatusCodes.CREATED,aesResponseDto,"user created successfully");
 		} catch (ex) {
 			const error = ex as Error;
 			if (queryRunner.isTransactionActive) {

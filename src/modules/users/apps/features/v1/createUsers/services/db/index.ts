@@ -45,10 +45,10 @@ export class CreateUserDbService implements ICreateUserDbService {
 
 	public constructor() {
 		this._addUserService = Container.get(AddUserService);
-		this._addUserCredentialsService = Container.get(AddUserCommunicationService);
+		this._addUserCredentialsService = Container.get(AddUserCredentialsService);
 		this._addUserKeyService = Container.get(AddUserKeyService);
 		this._addUserSettingsService = Container.get(AddUserSettingsService);
-		this._addUserCommunicationService = Container.get(AddUserCredentialsService);
+		this._addUserCommunicationService = Container.get(AddUserCommunicationService);
 	}
 
 	public async handleAsync(
@@ -109,6 +109,8 @@ export class CreateUserDbService implements ICreateUserDbService {
 					addUserCommunicationServiceResult.error.statusCode,
 					addUserCommunicationServiceResult.error.message
 				);
+
+      console.log(`cred: ${params.entity.entity.credentials}`);
 
 			// Add User Credentials Service
 			const addUserCredentialsServiceResult =

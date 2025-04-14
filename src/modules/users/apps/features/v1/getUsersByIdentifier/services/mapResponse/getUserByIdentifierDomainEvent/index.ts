@@ -32,6 +32,8 @@ export class GetUserByIdentifiersDomainEventMapResponseService
 				firstName: params.firstName,
 				lastName: params.lastName,
 				version: params.version,
+        created_date: params.created_date,
+        modified_date: params.modified_date,
 				communication: {
 					identifier: params.userCommunication.identifier,
 					email: params.userCommunication.email,

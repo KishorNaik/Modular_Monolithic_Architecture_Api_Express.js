@@ -45,5 +45,8 @@ export class CreateUserRequestDto {
 // @endregion
 
 // @region Response dto
-export class CreateUserResponseDto {}
+export class CreateUserResponseDto {
+  public identifier?: string;
+  public clientId?: string;
+}
 // @endregion

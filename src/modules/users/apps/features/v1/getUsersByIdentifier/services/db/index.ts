@@ -1,7 +1,7 @@
 import { sealed } from '@/shared/utils/decorators/sealed';
 import { ResultError, ResultExceptionFactory } from '@/shared/utils/exceptions/results';
 import { IServiceHandlerAsync } from '@/shared/utils/helpers/services';
-import { GetUsersByIdentifierService, UserEntity } from '@kishornaik/mma_db';
+import { GetUsersByIdentifierService, QueryRunner, UserEntity } from '@kishornaik/mma_db';
 import { StatusCodes } from 'http-status-codes';
 import { Ok, Result } from 'neverthrow';
 import Container, { Service } from 'typedi';
@@ -11,8 +11,13 @@ Container.set<GetUsersByIdentifierService>(
 	new GetUsersByIdentifierService()
 );
 
+export interface IGetUserByIdentifierServiceParameters {
+  userEntity: UserEntity;
+  queryRunner?: QueryRunner;
+}
+
 export interface IGetUsersByIdentifierDbService
-	extends IServiceHandlerAsync<UserEntity, UserEntity> {}
+	extends IServiceHandlerAsync<IGetUserByIdentifierServiceParameters, UserEntity> {}
 
 @sealed
 @Service()
@@ -23,16 +28,20 @@ export class GetUserByIdentifierDbService implements IGetUsersByIdentifierDbServ
 		this._getUserByIdentifierService = Container.get(GetUsersByIdentifierService);
 	}
 
-	public async handleAsync(params: UserEntity): Promise<Result<UserEntity, ResultError>> {
+	public async handleAsync(params: IGetUserByIdentifierServiceParameters): Promise<Result<UserEntity, ResultError>> {
 		try {
 			// @guard
 			if (!params)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid params');
 
+      if(!params.userEntity)
+        return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid params')
+
 			// Db Service
 			const getUserByIdentifierServiceResult =
 				await this._getUserByIdentifierService.handleAsync({
-					userEntity: params,
+					userEntity: params.userEntity,
+          queryRunner: params.queryRunner,
 				});
 			if (getUserByIdentifierServiceResult.isErr())
 				return ResultExceptionFactory.error(

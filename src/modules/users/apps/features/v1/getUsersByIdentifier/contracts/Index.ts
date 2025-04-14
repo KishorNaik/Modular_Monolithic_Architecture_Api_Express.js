@@ -1,8 +1,8 @@
 import { IUsers } from '@/modules/users/shared/types';
 import { IsSafeString } from '@/shared/utils/validations/decorators/isSafeString';
-import { StatusEnum } from '@kishornaik/mma_db';
+import { QueryRunner, StatusEnum } from '@kishornaik/mma_db';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, IsUUID, ValidateIf } from 'class-validator';
 
 // @region Request Dto
 export class GetUserByIdentifierRequestDto {
