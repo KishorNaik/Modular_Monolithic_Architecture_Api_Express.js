@@ -6,15 +6,15 @@ import {
 	GetUserByIdentifierDomainEventResponseDto,
 } from '../../../contracts/Index';
 import { StatusCodes } from 'http-status-codes';
-import { GetUserByIdentifierDomainEventValidationService } from '../../../services/validations/getUserByIdentifierDomainEvent';
 import Container, { Service } from 'typedi';
-import { GetUserByIdentifierMapEntityService } from '../../../services/mapEntity';
-import { GetUserByIdentifierDbService } from '../../../services/db';
+import { GetUserByIdentifierMapEntityService } from './services/mapEntity';
+import { GetUserByIdentifierDbService } from './services/db';
 import { QueryRunner, UserEntity } from '@kishornaik/mma_db';
-import { GetUserByIdentifiersDomainEventMapResponseService } from '../../../services/mapResponse/getUserByIdentifierDomainEvent';
 import { IServiceHandlerAsync } from '@/shared/utils/helpers/services';
 import { ResultError, ResultExceptionFactory } from '@/shared/utils/exceptions/results';
 import { Ok, Result } from 'neverthrow';
+import { GetUserByIdentifiersDomainEventMapResponseService } from './services/mapResponse';
+import { GetUserByIdentifierDomainEventValidationService } from './services/validations';
 
 export interface IGetUserByIdentifierDomainEventServiceParameters {
 	request: GetUserByIdentifierDomainEventRequestDto;

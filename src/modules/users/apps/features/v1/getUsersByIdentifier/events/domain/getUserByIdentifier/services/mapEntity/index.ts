@@ -1,6 +1,6 @@
 import { sealed } from '@/shared/utils/decorators/sealed';
 import { Service } from 'typedi';
-import { GetUserByIdentifierDomainEventRequestDto } from '../../contracts/Index';
+import { GetUserByIdentifierDomainEventRequestDto } from '../../../../../contracts/Index';
 import { IServiceHandlerAsync } from '@/shared/utils/helpers/services';
 import { UserEntity } from '@kishornaik/mma_db';
 import { ResultError, ResultExceptionFactory } from '@/shared/utils/exceptions/results';

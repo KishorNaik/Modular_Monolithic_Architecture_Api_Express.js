@@ -19,6 +19,7 @@ export interface IUserCommunication {
 	identifier?: string;
 	email?: string;
 	mobileNo?: string;
+	userId?: string;
 }
 
 export interface IUserKeys {
@@ -27,6 +28,7 @@ export interface IUserKeys {
 	refresh_Token_expires_at?: Date;
 	aesSecretKey?: string;
 	hmacSecretKey?: string;
+	userId?: string;
 }
 
 export interface IUserCredentials {
@@ -34,6 +36,7 @@ export interface IUserCredentials {
 	username?: string;
 	salt?: string;
 	hash?: string;
+	userId?: string;
 }
 
 export interface IUserSettings {
@@ -42,5 +45,6 @@ export interface IUserSettings {
 	isEmailVerified?: BoolEnum;
 	isVerificationEmailSent?: BoolEnum;
 	isWelcomeEmailSent?: BoolEnum;
+	userId?: string;
 }
 // @endregion

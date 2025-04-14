@@ -243,6 +243,7 @@ export class CreateUserCommandHandler
 
 			await queryRunner.commitTransaction();
 
+			// Todo: User Created Domain Event
 			// Domain Event Service
 			// Is Email Verification Notification Integration Event
 

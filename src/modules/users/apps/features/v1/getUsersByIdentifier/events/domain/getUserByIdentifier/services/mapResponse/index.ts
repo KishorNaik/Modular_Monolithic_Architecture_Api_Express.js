@@ -3,10 +3,10 @@ import { sealed } from '@/shared/utils/decorators/sealed';
 import { IServiceHandlerAsync } from '@/shared/utils/helpers/services';
 import { UserEntity } from '@kishornaik/mma_db';
 import { Service } from 'typedi';
-import { GetUserByIdentifierDomainEventResponseDto } from '../../../contracts/Index';
 import { ResultError, ResultExceptionFactory } from '@/shared/utils/exceptions/results';
 import { Ok, Result } from 'neverthrow';
 import { StatusCodes } from 'http-status-codes';
+import { GetUserByIdentifierDomainEventResponseDto } from '../../../../../contracts/Index';
 
 export interface IGetUserByIdentifierDomainEventMapService
 	extends IServiceHandlerAsync<UserEntity, GetUserByIdentifierDomainEventResponseDto> {}
@@ -38,12 +38,14 @@ export class GetUserByIdentifiersDomainEventMapResponseService
 					identifier: params.userCommunication.identifier,
 					email: params.userCommunication.email,
 					mobileNo: params.userCommunication.mobileNo,
+					userId: params.userCommunication.userId,
 				},
 				credentials: {
 					identifier: params.userCredentials.identifier,
 					username: params.userCredentials.username,
 					salt: params.userCredentials.salt,
 					hash: params.userCredentials.hash,
+					userId: params.userCredentials.userId,
 				},
 				keys: {
 					identifier: params.userKeys.identifier,
@@ -51,6 +53,7 @@ export class GetUserByIdentifiersDomainEventMapResponseService
 					hmacSecretKey: params.userKeys.hmacSecretKey,
 					refresh_token: params.userKeys.refresh_token,
 					refresh_Token_expires_at: params.userKeys.refresh_Token_expires_at,
+					userId: params.userKeys.userId,
 				},
 			};
 
