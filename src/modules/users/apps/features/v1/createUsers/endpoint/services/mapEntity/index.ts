@@ -2,7 +2,7 @@ import { IHashPasswordResult } from '@/shared/services/users/user.HashPassword.S
 import { sealed } from '@/shared/utils/decorators/sealed';
 import { Service } from 'typedi';
 import { ICreateUserKeyServiceResult } from '../keys';
-import { CreateUserRequestDto } from '../../contracts';
+import { CreateUserRequestDto } from '../../../contracts';
 import {
 	StatusEnum,
 	UserCommunicationEntity,

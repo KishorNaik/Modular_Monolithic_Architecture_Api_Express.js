@@ -2,7 +2,7 @@ import { sealed } from '@/shared/utils/decorators/sealed';
 import { IServiceHandlerAsync } from '@/shared/utils/helpers/services';
 import { UserEntity } from '@kishornaik/mma_db';
 import { Service } from 'typedi';
-import { CreateUserResponseDto } from '../../contracts';
+import { CreateUserResponseDto } from '../../../contracts';
 import { ResultError, ResultExceptionFactory } from '@/shared/utils/exceptions/results';
 import { Ok, Result } from 'neverthrow';
 import { StatusCodes } from 'http-status-codes';
