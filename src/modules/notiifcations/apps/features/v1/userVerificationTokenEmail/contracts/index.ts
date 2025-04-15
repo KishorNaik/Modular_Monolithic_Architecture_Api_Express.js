@@ -22,13 +22,11 @@ export class UserVerificationTokenEmailIntegrationEventRequestDto {
 	@Type(() => String)
 	public fullName?: string;
 
-  @IsString()
+	@IsString()
 	@IsNotEmpty()
-  @IsUUID()
+	@IsUUID()
 	@IsSafeString({ message: 'Name must not contain HTML or JavaScript code' })
 	@Type(() => String)
-  public emailVerificationToken: string;
-
-
+	public emailVerificationToken: string;
 }
 // @endregion

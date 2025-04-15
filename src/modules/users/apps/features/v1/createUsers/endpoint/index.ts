@@ -251,7 +251,7 @@ export class CreateUserCommandHandler
 					entity.entity.users.identifier,
 					entity.entity.communication.email,
 					`${entity.entity.users.firstName} ${entity.entity.users.lastName}`,
-          entity.entity.settings.emailVerificationToken
+					entity.entity.settings.emailVerificationToken
 				)
 			);
 
