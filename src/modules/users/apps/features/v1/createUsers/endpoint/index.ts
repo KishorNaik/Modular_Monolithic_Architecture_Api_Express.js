@@ -250,7 +250,8 @@ export class CreateUserCommandHandler
 				new UserCreatedDomainEventService(
 					entity.entity.users.identifier,
 					entity.entity.communication.email,
-					`${entity.entity.users.firstName} ${entity.entity.users.lastName}`
+					`${entity.entity.users.firstName} ${entity.entity.users.lastName}`,
+          entity.entity.settings.emailVerificationToken
 				)
 			);
 

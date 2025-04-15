@@ -14,12 +14,14 @@ export class UserCreatedDomainEventService extends NotificationData {
 	private readonly _identifier: string;
 	private readonly _email: string;
 	private readonly _fullName: string;
+  private readonly _emailVerificationToken:string;
 
-	public constructor(identifier: string, email: string, fullName: string) {
+	public constructor(identifier: string, email: string, fullName: string, emailVerificationToken:string) {
 		super();
 		this._identifier = identifier;
 		this._email = email;
 		this._fullName = fullName;
+    this._emailVerificationToken=emailVerificationToken;
 	}
 
 	public get identifier(): string {
@@ -33,6 +35,10 @@ export class UserCreatedDomainEventService extends NotificationData {
 	public get fullName(): string {
 		return this._fullName;
 	}
+
+  public get emailVerificationToken(): string {
+    return this._emailVerificationToken;
+  }
 }
 // @endregion
 
@@ -53,6 +59,7 @@ export class UserCreatedDomainEventServiceHandler
 			userVerificationTokenEmailIntegrationEventRequestDto.email = notification.email;
 			userVerificationTokenEmailIntegrationEventRequestDto.fullName = notification.fullName;
 			userVerificationTokenEmailIntegrationEventRequestDto.userId = notification.identifier;
+      userVerificationTokenEmailIntegrationEventRequestDto.emailVerificationToken= notification.emailVerificationToken;
 			const userVerificationTokenEmailIntegrationEventService: UserVerificationTokenEmailIntegrationEventService =
 				new UserVerificationTokenEmailIntegrationEventService(
 					userVerificationTokenEmailIntegrationEventRequestDto

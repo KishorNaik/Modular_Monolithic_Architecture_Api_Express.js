@@ -21,5 +21,14 @@ export class UserVerificationTokenEmailIntegrationEventRequestDto {
 	@IsSafeString({ message: 'Name must not contain HTML or JavaScript code' })
 	@Type(() => String)
 	public fullName?: string;
+
+  @IsString()
+	@IsNotEmpty()
+  @IsUUID()
+	@IsSafeString({ message: 'Name must not contain HTML or JavaScript code' })
+	@Type(() => String)
+  public emailVerificationToken: string;
+
+
 }
 // @endregion
