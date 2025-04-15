@@ -1,6 +1,6 @@
 import Container from 'typedi';
-import { CreateUserController } from './apps/features/v1/createUsers';
 import { UpdateUserSettingsService, UpdateUserVersionService } from '@kishornaik/mma_db';
+import { CreateUserController } from './apps/features/v1/createUsers';
 
 Container.set<UpdateUserSettingsService>(
 	UpdateUserSettingsService,
