@@ -34,7 +34,7 @@ export class IsVerificationEmailSendUpdateDbService
 	private readonly _updateUserSettingsService: UpdateUserSettingsService;
 	private readonly _userSharedCacheService: UserSharedCacheService;
 	private readonly _isVerificationEmailSendIntegrationEventMapEntityService: IsVerificationEmailSendIntegrationEventMapEntityService;
-  private readonly _updateUserRowVersionService:UpdateUserVersionService;
+	private readonly _updateUserRowVersionService: UpdateUserVersionService;
 
 	public constructor() {
 		this._updateUserSettingsService = Container.get(UpdateUserSettingsService);
@@ -42,7 +42,7 @@ export class IsVerificationEmailSendUpdateDbService
 		this._isVerificationEmailSendIntegrationEventMapEntityService = Container.get(
 			IsVerificationEmailSendIntegrationEventMapEntityService
 		);
-    this._updateUserRowVersionService=Container.get(UpdateUserVersionService);
+		this._updateUserRowVersionService = Container.get(UpdateUserVersionService);
 	}
 
 	public async handleAsync(
@@ -95,14 +95,18 @@ export class IsVerificationEmailSendUpdateDbService
 					updateUserSettingsServiceResult.error.message
 				);
 
-      // Update Row Version for Cache Update
-      const userEntity:UserEntity=new UserEntity()
-      userEntity.identifier=users.identifier;
-      userEntity.status=StatusEnum.INACTIVE;
-      userEntity.modified_date=new Date();
-      const updateRowVersionServiceResult=await this._updateUserRowVersionService.handleAsync(userEntity,queryRunner);
-      if (updateRowVersionServiceResult.isErr())
-        return ResultExceptionFactory.error(updateRowVersionServiceResult.error.statusCode,updateRowVersionServiceResult.error.message);
+			// Update Row Version for Cache Update
+			const userEntity: UserEntity = new UserEntity();
+			userEntity.identifier = users.identifier;
+			userEntity.status = StatusEnum.INACTIVE;
+			userEntity.modified_date = new Date();
+			const updateRowVersionServiceResult =
+				await this._updateUserRowVersionService.handleAsync(userEntity, queryRunner);
+			if (updateRowVersionServiceResult.isErr())
+				return ResultExceptionFactory.error(
+					updateRowVersionServiceResult.error.statusCode,
+					updateRowVersionServiceResult.error.message
+				);
 
 			return new Ok(undefined);
 		} catch (ex) {

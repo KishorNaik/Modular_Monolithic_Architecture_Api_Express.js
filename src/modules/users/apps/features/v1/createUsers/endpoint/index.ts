@@ -242,11 +242,17 @@ export class CreateUserCommandHandler
 				);
 			}
 
-      await queryRunner.commitTransaction();
+			await queryRunner.commitTransaction();
 
 			// Domain Event Service
 			// Is Email Verification Notification Integration Event
-      await mediatR.publish(new UserCreatedDomainEventService(entity.entity.users.identifier, entity.entity.communication.email, `${entity.entity.users.firstName} ${entity.entity.users.lastName}`));
+			await mediatR.publish(
+				new UserCreatedDomainEventService(
+					entity.entity.users.identifier,
+					entity.entity.communication.email,
+					`${entity.entity.users.firstName} ${entity.entity.users.lastName}`
+				)
+			);
 
 			return DataResponseFactory.Response(
 				true,

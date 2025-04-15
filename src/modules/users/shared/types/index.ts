@@ -7,7 +7,7 @@ export interface IUsers {
 	firstName?: string;
 	lastName?: string;
 	clientId?: string;
-  status?: StatusEnum;
+	status?: StatusEnum;
 	communication?: IUserCommunication;
 	keys?: IUserKeys;
 	credentials?: IUserCredentials;
@@ -22,7 +22,7 @@ export interface IUserCommunication {
 	email?: string;
 	mobileNo?: string;
 	userId?: string;
-  status?: StatusEnum;
+	status?: StatusEnum;
 }
 
 export interface IUserKeys {
@@ -32,7 +32,7 @@ export interface IUserKeys {
 	aesSecretKey?: string;
 	hmacSecretKey?: string;
 	userId?: string;
-  status?: StatusEnum;
+	status?: StatusEnum;
 }
 
 export interface IUserCredentials {
@@ -41,7 +41,7 @@ export interface IUserCredentials {
 	salt?: string;
 	hash?: string;
 	userId?: string;
-  status?: StatusEnum;
+	status?: StatusEnum;
 }
 
 export interface IUserSettings {
@@ -51,6 +51,6 @@ export interface IUserSettings {
 	isVerificationEmailSent?: BoolEnum;
 	isWelcomeEmailSent?: BoolEnum;
 	userId?: string;
-  status?: StatusEnum;
+	status?: StatusEnum;
 }
 // @endregion
