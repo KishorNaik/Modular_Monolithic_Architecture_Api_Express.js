@@ -92,6 +92,9 @@ export class IsVerificationEmailSendIntegrationEventServiceHandler
 				await queryRunner.rollbackTransaction();
 				throw new Error(userSharedCacheServiceResult.error.message);
 			}
+
+      await queryRunner.commitTransaction();
+
 		} catch (ex) {
 			const error = ex as Error;
 			if (queryRunner.isTransactionActive) {

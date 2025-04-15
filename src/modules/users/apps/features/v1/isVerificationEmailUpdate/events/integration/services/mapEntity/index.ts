@@ -25,6 +25,7 @@ export class IsVerificationEmailSendIntegrationEventMapEntityService
 			// Map Entity
 			const userSettingsEntity = new UserSettingsEntity();
 			userSettingsEntity.identifier = params.settings.identifier;
+      userSettingsEntity.status=params.settings.status;
 			userSettingsEntity.isVerificationEmailSent = BoolEnum.YES;
 
 			return new Ok(userSettingsEntity);

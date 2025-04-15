@@ -31,6 +31,7 @@ export class GetUserByIdentifiersDomainEventMapResponseService
 				clientId: params.clientId,
 				firstName: params.firstName,
 				lastName: params.lastName,
+        status: params.status,
 				version: params.version,
 				created_date: params.created_date,
 				modified_date: params.modified_date,
@@ -39,6 +40,7 @@ export class GetUserByIdentifiersDomainEventMapResponseService
 					email: params.userCommunication.email,
 					mobileNo: params.userCommunication.mobileNo,
 					userId: params.userCommunication.userId,
+          status: params.userCommunication.status,
 				},
 				credentials: {
 					identifier: params.userCredentials.identifier,
@@ -46,6 +48,7 @@ export class GetUserByIdentifiersDomainEventMapResponseService
 					salt: params.userCredentials.salt,
 					hash: params.userCredentials.hash,
 					userId: params.userCredentials.userId,
+          status: params.userCredentials.status
 				},
 				keys: {
 					identifier: params.userKeys.identifier,
@@ -54,7 +57,17 @@ export class GetUserByIdentifiersDomainEventMapResponseService
 					refresh_token: params.userKeys.refresh_token,
 					refresh_Token_expires_at: params.userKeys.refresh_Token_expires_at,
 					userId: params.userKeys.userId,
+          status: params.userKeys.status
 				},
+        settings:{
+          identifier:params.userSetting.identifier,
+          emailVerificationToken: params.userSetting.emailVerificationToken,
+          isEmailVerified: params.userSetting.isEmailVerified,
+          isVerificationEmailSent: params.userSetting.isVerificationEmailSent,
+          isWelcomeEmailSent: params.userSetting.isWelcomeEmailSent,
+          userId: params.userSetting.userId,
+          status:params.userSetting.status
+        }
 			};
 
 			return new Ok(result);

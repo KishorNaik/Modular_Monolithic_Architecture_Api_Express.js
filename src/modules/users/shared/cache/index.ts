@@ -118,7 +118,7 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 				userEntity.status = status;
 
 				const userRowVersionServiceResult =
-					await this._getUserRowVersionService.handleAsync(userEntity);
+					await this._getUserRowVersionService.handleAsync(userEntity, queryRunner);
 				if (userRowVersionServiceResult.isErr())
 					return ResultExceptionFactory.error(
 						userRowVersionServiceResult.error.statusCode,

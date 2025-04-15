@@ -63,10 +63,10 @@ describe(`Create User Integration Test`, () => {
 	// node --trace-deprecation --test --test-name-pattern='should_return_true_if_all_services_passed' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/createUsers/index.test.ts
 	it(`should_return_true_if_all_services_passed`, async () => {
 		const createUserRequestDto: CreateUserRequestDto = new CreateUserRequestDto();
-		createUserRequestDto.firstName = 'kishor';
+		createUserRequestDto.firstName = 'eshann';
 		createUserRequestDto.lastName = 'naik';
-		createUserRequestDto.email = 'kishor.naik.dev@gmail.com';
-		createUserRequestDto.mobileNo = '9167791111';
+		createUserRequestDto.email = 'eshaan.naik.dev10@gmail.com';
+		createUserRequestDto.mobileNo = '9167791121';
 		createUserRequestDto.password = 'Shree@123';
 
 		const aes = new AES(ENCRYPTION_KEY);

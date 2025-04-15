@@ -39,6 +39,7 @@ import { CreateUserDbService } from './services/db';
 import { CreateUserMapResponseService } from './services/mapResponse';
 import { CreateUserEncryptResponseService } from './services/encryptResponse';
 import { CreateUserRequestDto, CreateUserResponseDto } from '../contracts';
+import { UserCreatedDomainEventService } from '../events/domain/userCreated';
 
 // @region Controller
 @JsonController('/api/v1/users')
@@ -241,11 +242,11 @@ export class CreateUserCommandHandler
 				);
 			}
 
-			await queryRunner.commitTransaction();
+      await queryRunner.commitTransaction();
 
-			// Todo: User Created Domain Event
 			// Domain Event Service
 			// Is Email Verification Notification Integration Event
+      await mediatR.publish(new UserCreatedDomainEventService(entity.entity.users.identifier, entity.entity.communication.email, `${entity.entity.users.firstName} ${entity.entity.users.lastName}`));
 
 			return DataResponseFactory.Response(
 				true,

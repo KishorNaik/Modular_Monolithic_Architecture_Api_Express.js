@@ -1,3 +1,4 @@
+import { StatusEnum } from '@/shared/models/enums/status.enum';
 import { BoolEnum } from '@kishornaik/mma_db/dist/core/shared/models/enums/bool.enum';
 
 // @region Types
@@ -6,6 +7,7 @@ export interface IUsers {
 	firstName?: string;
 	lastName?: string;
 	clientId?: string;
+  status?: StatusEnum;
 	communication?: IUserCommunication;
 	keys?: IUserKeys;
 	credentials?: IUserCredentials;
@@ -20,6 +22,7 @@ export interface IUserCommunication {
 	email?: string;
 	mobileNo?: string;
 	userId?: string;
+  status?: StatusEnum;
 }
 
 export interface IUserKeys {
@@ -29,6 +32,7 @@ export interface IUserKeys {
 	aesSecretKey?: string;
 	hmacSecretKey?: string;
 	userId?: string;
+  status?: StatusEnum;
 }
 
 export interface IUserCredentials {
@@ -37,6 +41,7 @@ export interface IUserCredentials {
 	salt?: string;
 	hash?: string;
 	userId?: string;
+  status?: StatusEnum;
 }
 
 export interface IUserSettings {
@@ -46,5 +51,6 @@ export interface IUserSettings {
 	isVerificationEmailSent?: BoolEnum;
 	isWelcomeEmailSent?: BoolEnum;
 	userId?: string;
+  status?: StatusEnum;
 }
 // @endregion
