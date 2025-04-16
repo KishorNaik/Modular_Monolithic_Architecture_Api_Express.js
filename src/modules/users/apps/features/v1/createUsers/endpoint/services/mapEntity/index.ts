@@ -95,7 +95,9 @@ export class CreateUserMapEntityService implements ICreateUserMapEntityService {
 			const userSettings = new UserSettingsEntity();
 			userSettings.identifier = Guid.create().toString();
 			userSettings.emailVerificationToken = Guid.create().toString();
-      userSettings.email_Verification_Token_expires_at=new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+			userSettings.email_Verification_Token_expires_at = new Date(
+				new Date().getTime() + 24 * 60 * 60 * 1000
+			);
 			userSettings.isEmailVerified = BoolEnum.NO;
 			userSettings.status = StatusEnum.INACTIVE;
 			userSettings.userId = userEntity.identifier;
