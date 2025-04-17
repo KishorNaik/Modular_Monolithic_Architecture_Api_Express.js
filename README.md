@@ -1,14 +1,18 @@
 # Modular Monolithic Architecture
+
 ## Overview
+
 This project demonstrates a modular monolithic architecture using Express.js. It aims to showcase a scalable and maintainable approach to building monolithic applications with modular components.
 
 ## Features
+
 - Organized module structure for scalability using vertical slice architecture
 - Event-driven architecture, enabling asynchronous operations and decoupled communication
 - Adherence to SOLID principles to ensure clean and maintainable code
 - Separation of concerns using independent modules
 
 ## Technologies
+
 - Node.js (Runtime)
 - Express.js (Web framework)
 - PostgreSQL (Database)

@@ -99,10 +99,10 @@ export class IsVerificationEmailSendUpdateDbService
 			// Update Row Version for Cache Update
 			const updateRowVersionServiceResult =
 				await this._updateUserRowVersionService.handleAsync({
-          queryRunner:queryRunner,
-          status: StatusEnum.INACTIVE,
-          userId:users.identifier
-        });
+					queryRunner: queryRunner,
+					status: StatusEnum.INACTIVE,
+					userId: users.identifier,
+				});
 			if (updateRowVersionServiceResult.isErr())
 				return ResultExceptionFactory.error(
 					updateRowVersionServiceResult.error.status,
