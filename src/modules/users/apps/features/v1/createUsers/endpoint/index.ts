@@ -40,6 +40,7 @@ import { CreateUserMapResponseService } from './services/mapResponse';
 import { CreateUserEncryptResponseService } from './services/encryptResponse';
 import { CreateUserRequestDto, CreateUserResponseDto } from '../contracts';
 import { UserCreatedDomainEventService } from '../events/domain/userCreated';
+import { logConstruct, logger } from '@/shared/utils/helpers/loggers';
 
 // @region Controller
 @JsonController('/api/v1/users')
@@ -121,14 +122,18 @@ export class CreateUserCommandHandler
 					data: value.request.body,
 					key: ENCRYPTION_KEY,
 				});
-			if (createUserDecryptRequestServiceResult.isErr())
-				return DataResponseFactory.error(
+			if (createUserDecryptRequestServiceResult.isErr()){
+        logger.error(logConstruct(`CreateUserCommandHandler`, `CreateUserDecryptRequestService`, createUserDecryptRequestServiceResult.error.message));
+        return DataResponseFactory.error(
 					createUserDecryptRequestServiceResult.error.status,
 					createUserDecryptRequestServiceResult.error.message
 				);
+      }
 
 			const createUserRequestDto: CreateUserRequestDto =
 				createUserDecryptRequestServiceResult.value;
+
+      logger.info(logConstruct(`CreateUserCommandHandler`, `CreateUserDecryptRequestService`, `Decrypt Success`));
 
 			// Validation Service
 			const createUserRequestValidationServiceResult =
@@ -136,36 +141,48 @@ export class CreateUserCommandHandler
 					dto: createUserRequestDto,
 					dtoClass: CreateUserRequestDto,
 				});
-			if (createUserRequestValidationServiceResult.isErr())
-				return DataResponseFactory.error(
+			if (createUserRequestValidationServiceResult.isErr()){
+        logger.error(logConstruct(`CreateUserCommandHandler`, `CreateUserRequestValidationService`, createUserRequestValidationServiceResult.error.message));
+        return DataResponseFactory.error(
 					createUserRequestValidationServiceResult.error.status,
 					createUserRequestValidationServiceResult.error.message
 				);
+      }
+      logger.info(logConstruct(`CreateUserCommandHandler`, `createUserRequestValidationService`, `Validation Success`));
 
 			// Hash Password
 			const createUserHashPasswordServiceResult =
 				await this._createUserHashPasswordService.handleAsync({
 					password: createUserRequestDto.password,
 				});
-			if (createUserHashPasswordServiceResult.isErr())
-				return DataResponseFactory.error(
+			if (createUserHashPasswordServiceResult.isErr()){
+        logger.error(logConstruct(`CreateUserCommandHandler`, `CreateUserHashPasswordService`, createUserHashPasswordServiceResult.error.message));
+        return DataResponseFactory.error(
 					createUserHashPasswordServiceResult.error.status,
 					createUserHashPasswordServiceResult.error.message
 				);
+      }
 
 			const hashPasswordResult: IHashPasswordResult =
 				createUserHashPasswordServiceResult.value;
 
-			// Keys
+      logger.info(logConstruct(`CreateUserCommandHandler`, `CreateUserHashPasswordService`, `Hash Password Success`));
+
+			// generate keys
 			const createUserKeyServiceResult = await this._createUserKeysService.handleAsync();
 			if (createUserKeyServiceResult.isErr())
-				return DataResponseFactory.error(
+      {
+        logger.error(logConstruct(`CreateUserCommandHandler`, `CreateUserKeyService`, createUserKeyServiceResult.error.message));
+        return DataResponseFactory.error(
 					createUserKeyServiceResult.error.status,
 					createUserKeyServiceResult.error.message
 				);
+      }
 
 			const createUserKeyResult: ICreateUserKeyServiceResult =
 				createUserKeyServiceResult.value;
+
+      logger.info(logConstruct(`CreateUserCommandHandler`, `CreateUserKeyService`, `Generate Keys Success`));
 
 			// Map Entity Service
 			const createUserMapEntityServiceResult =
@@ -175,33 +192,45 @@ export class CreateUserCommandHandler
 					keys: createUserKeyResult,
 				});
 			if (createUserMapEntityServiceResult.isErr())
+      {
+        logger.error(logConstruct(`CreateUserCommandHandler`, `CreateUserMapEntityService`, createUserMapEntityServiceResult.error.message));
 				return DataResponseFactory.error(
 					createUserMapEntityServiceResult.error.status,
 					createUserMapEntityServiceResult.error.message
 				);
-
+      }
 			const entity: ICreateUserMapEntityServiceResult =
 				createUserMapEntityServiceResult.value;
 
+      logger.info(logConstruct(`CreateUserCommandHandler`, `CreateUserMapEntityService`, `Map Entity Success`));
+
 			await queryRunner.startTransaction();
+      logger.info(logConstruct(`CreateUserCommandHandler`, `handle`, `Start Transaction`));
+
 			// Db Service
 			const createUserDbServiceResult = await this._createUserDbService.handleAsync({
 				entity: entity,
 				queryRunner: queryRunner,
 			});
 			if (createUserDbServiceResult.isErr()) {
+        logger.error(logConstruct(`CreateUserCommandHandler`, `CreateUserDbService`, createUserDbServiceResult.error.message));
 				await queryRunner.rollbackTransaction();
+        logger.warn(logConstruct(`CreateUserCommandHandler`, `CreateUserDbService`, `Rollback Transaction`));
 				return DataResponseFactory.error(
 					createUserDbServiceResult.error.status,
 					createUserDbServiceResult.error.message
 				);
 			}
 
+      logger.info(logConstruct(`CreateUserCommandHandler`, `CreateUserDbService`, `Db Service Success`));
+
 			// Map Response Service
 			const createUserMapResponseServiceResult =
 				await this._createUserMapResponseService.handleAsync(entity.entity.users);
 			if (createUserMapResponseServiceResult.isErr()) {
+        logger.error(logConstruct(`CreateUserCommandHandler`, `CreateUserMapResponseService`, createUserMapResponseServiceResult.error.message));
 				await queryRunner.rollbackTransaction();
+        logger.warn(logConstruct(`CreateUserCommandHandler`, `CreateUserMapResponseService`, `Rollback Transaction`));
 				return DataResponseFactory.error(
 					createUserMapResponseServiceResult.error.status,
 					createUserMapResponseServiceResult.error.message
@@ -211,6 +240,8 @@ export class CreateUserCommandHandler
 			const createUserResponseDto: CreateUserResponseDto =
 				createUserMapResponseServiceResult.value;
 
+      logger.info(logConstruct(`CreateUserCommandHandler`, `CreateUserMapResponseService`, `Map Response Success`));
+
 			// Encrypt Service
 			const createUserEncryptResponseServiceResult =
 				await this._createUserEncryptResponseService.handleAsync({
@@ -218,7 +249,9 @@ export class CreateUserCommandHandler
 					key: ENCRYPTION_KEY,
 				});
 			if (createUserEncryptResponseServiceResult.isErr()) {
+        logger.error(logConstruct(`CreateUserCommandHandler`, `CreateUserEncryptResponseService`, createUserEncryptResponseServiceResult.error.message));
 				await queryRunner.rollbackTransaction();
+        logger.warn(logConstruct(`CreateUserCommandHandler`, `CreateUserEncryptResponseService`, `Rollback Transaction`));
 				return DataResponseFactory.error(
 					createUserEncryptResponseServiceResult.error.status,
 					createUserEncryptResponseServiceResult.error.message
@@ -227,6 +260,7 @@ export class CreateUserCommandHandler
 
 			const aesResponseDto: AesResponseDto =
 				createUserEncryptResponseServiceResult.value.aesResponseDto;
+      logger.info(logConstruct(`CreateUserCommandHandler`, `CreateUserEncryptResponseService`, `Encrypt Success`));
 
 			// Update Cache service
 			const userCachedSharedServiceResult = await this._userSharedCacheService.handleAsync({
@@ -235,14 +269,19 @@ export class CreateUserCommandHandler
 				queryRunner: queryRunner,
 			});
 			if (userCachedSharedServiceResult.isErr()) {
+        logger.error(logConstruct(`CreateUserCommandHandler`, `UserSharedCacheService`, userCachedSharedServiceResult.error.message));
 				await queryRunner.rollbackTransaction();
+        logger.warn(logConstruct(`CreateUserCommandHandler`, `UserSharedCacheService`, `Rollback Transaction`));
 				return DataResponseFactory.error(
 					userCachedSharedServiceResult.error.status,
 					userCachedSharedServiceResult.error.message
 				);
 			}
+      logger.info(logConstruct(`CreateUserCommandHandler`, `UserSharedCacheService`, `Update Cache Success`));
 
 			await queryRunner.commitTransaction();
+
+      logger.info(logConstruct(`CreateUserCommandHandler`, `handle`, `Commit Transaction`));
 
 			// Domain Event Service
 			// Is Email Verification Notification Integration Event
@@ -255,6 +294,8 @@ export class CreateUserCommandHandler
 				)
 			);
 
+      logger.info(logConstruct(`CreateUserCommandHandler`, `UserCreatedDomainEventService`, `Domain Event Success`));
+
 			return DataResponseFactory.Response(
 				true,
 				StatusCodes.CREATED,
@@ -263,12 +304,15 @@ export class CreateUserCommandHandler
 			);
 		} catch (ex) {
 			const error = ex as Error;
+      logger.error(logConstruct(`CreateUserCommandHandler`, `handle`, error.message,ex));
 			if (queryRunner.isTransactionActive) {
 				await queryRunner.rollbackTransaction();
+        logger.warn(logConstruct(`CreateUserCommandHandler`, `handle`, `Rollback Transaction`));
 			}
 			return DataResponseFactory.error(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
 		} finally {
 			await queryRunner.release();
+      logger.info(logConstruct(`CreateUserCommandHandler`, `handle`, `Release Transaction`));
 		}
 	}
 }

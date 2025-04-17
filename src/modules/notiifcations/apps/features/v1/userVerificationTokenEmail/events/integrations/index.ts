@@ -9,6 +9,7 @@ import {
 	IsVerificationEmailSendIntegrationEventRequestDto,
 	IsVerificationEmailSendIntegrationEventService,
 } from '@/modules/users/apps/features/v1/isVerificationEmailUpdate';
+import { logConstruct, logger } from '@/shared/utils/helpers/loggers';
 
 // @region Integration Event
 export class UserVerificationTokenEmailIntegrationEventService extends NotificationData {
@@ -67,11 +68,15 @@ export class UserVerificationTokenEmailIntegrationEventServiceHandler
 					userVerificationTokenEmailIntegrationEventRequestValidationServiceResult.error.message
 				);
 
+      logger.info(logConstruct(`UserVerificationTokenEmailIntegrationEventServiceHandler`, `UserVerificationTokenEmailIntegrationEventRequestValidationService`, `Validation Success`));
+
 			// Email Send
 			const sendUserEmailVerificationTokenServiceResult =
 				await this._sendUserEmailVerificationTokenService.handle(request);
 			if (sendUserEmailVerificationTokenServiceResult.isErr())
 				throw new Error(sendUserEmailVerificationTokenServiceResult.error.message);
+
+      logger.info(logConstruct(`UserVerificationTokenEmailIntegrationEventServiceHandler`, `SendUserEmailVerificationTokenService`, `Email Send Success`));
 
 			// Update User verification Flag
 			const isVerificationEmailSendIntegrationEventRequestDto: IsVerificationEmailSendIntegrationEventRequestDto =
@@ -82,7 +87,10 @@ export class UserVerificationTokenEmailIntegrationEventServiceHandler
 					isVerificationEmailSendIntegrationEventRequestDto
 				)
 			);
+      logger.info(logConstruct(`UserVerificationTokenEmailIntegrationEventServiceHandler`, `IsVerificationEmailSendIntegrationEventService`, `Update User verification Flag Success`));
 		} catch (ex) {
+      const error=ex as Error
+      logger.error(logConstruct(`UserVerificationTokenEmailIntegrationEventServiceHandler`, `handle`, error.message, `error:${ex}`));
 			throw ex;
 		}
 	}
