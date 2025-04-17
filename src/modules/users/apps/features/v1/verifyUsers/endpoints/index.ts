@@ -113,51 +113,84 @@ export class VerifyUserQueryHandler
 					dto: request,
 					dtoClass: VerifyUserRequestDto,
 				});
-			if (verifyUserRequestValidationServiceResult.isErr())
-      {
-        logger.error(logConstruct(`VerifyUserQueryHandler`, `VerifyUserValidationRequestService`, verifyUserRequestValidationServiceResult.error.message));
+			if (verifyUserRequestValidationServiceResult.isErr()) {
+				logger.error(
+					logConstruct(
+						`VerifyUserQueryHandler`,
+						`VerifyUserValidationRequestService`,
+						verifyUserRequestValidationServiceResult.error.message
+					)
+				);
 				return DataResponseFactory.error(
 					verifyUserRequestValidationServiceResult.error.status,
 					verifyUserRequestValidationServiceResult.error.message
 				);
-      }
+			}
 
-      logger.info(logConstruct(`VerifyUserQueryHandler`, `VerifyUserValidationRequestService`, `Validation Success`));
+			logger.info(
+				logConstruct(
+					`VerifyUserQueryHandler`,
+					`VerifyUserValidationRequestService`,
+					`Validation Success`
+				)
+			);
 
 			// Map Entity Service
 			const mapVerifyUserRequestDtoToEntityServiceResult =
 				await this._mapVerifyUserRequestDtoToEntityService.handleAsync(request);
-			if (mapVerifyUserRequestDtoToEntityServiceResult.isErr())
-      {
-        logger.error(logConstruct(`VerifyUserQueryHandler`, `MapVerifyUserRequestDtoToEntityService`, mapVerifyUserRequestDtoToEntityServiceResult.error.message));
+			if (mapVerifyUserRequestDtoToEntityServiceResult.isErr()) {
+				logger.error(
+					logConstruct(
+						`VerifyUserQueryHandler`,
+						`MapVerifyUserRequestDtoToEntityService`,
+						mapVerifyUserRequestDtoToEntityServiceResult.error.message
+					)
+				);
 				return DataResponseFactory.error(
 					mapVerifyUserRequestDtoToEntityServiceResult.error.status,
 					mapVerifyUserRequestDtoToEntityServiceResult.error.message
 				);
-      }
+			}
 
 			const userSettingsEntity: UserSettingsEntity =
 				mapVerifyUserRequestDtoToEntityServiceResult.value;
 
-      logger.info(logConstruct(`VerifyUserQueryHandler`, `MapVerifyUserRequestDtoToEntityService`, `Mapping Success`));
+			logger.info(
+				logConstruct(
+					`VerifyUserQueryHandler`,
+					`MapVerifyUserRequestDtoToEntityService`,
+					`Mapping Success`
+				)
+			);
 
 			// Check if Token is expired or not
 			const isValidTokenServiceResult =
 				await this._isEmailTokenValidService.handleAsync(userSettingsEntity);
-			if (isValidTokenServiceResult.isErr())
-      {
-        logger.error(logConstruct(`VerifyUserQueryHandler`, `IsEmailTokenValidService`, isValidTokenServiceResult.error.message));
+			if (isValidTokenServiceResult.isErr()) {
+				logger.error(
+					logConstruct(
+						`VerifyUserQueryHandler`,
+						`IsEmailTokenValidService`,
+						isValidTokenServiceResult.error.message
+					)
+				);
 				return DataResponseFactory.error(
 					isValidTokenServiceResult.error.status,
 					isValidTokenServiceResult.error.message
 				);
-      }
+			}
 			const isValidTokenResult: GetEmailVerificationTokenServiceResult =
 				isValidTokenServiceResult.value;
-      logger.info(logConstruct(`VerifyUserQueryHandler`, `IsEmailTokenValidService`, `Email Token Validity Check Success: Result:${isValidTokenResult?.isValidToken}`));
+			logger.info(
+				logConstruct(
+					`VerifyUserQueryHandler`,
+					`IsEmailTokenValidService`,
+					`Email Token Validity Check Success: Result:${isValidTokenResult?.isValidToken}`
+				)
+			);
 
 			await queryRunner.startTransaction();
-      logger.info(logConstruct(`VerifyUserQueryHandler`, `handle`, `Start Transaction`));
+			logger.info(logConstruct(`VerifyUserQueryHandler`, `handle`, `Start Transaction`));
 
 			if (isValidTokenResult.isValidToken) {
 				// If Token not Expired and it's valid then update user status to active (In all User Tables) & Remove the email token and expiration data as Null
@@ -165,20 +198,31 @@ export class VerifyUserQueryHandler
 					userId: isValidTokenResult.userId,
 					queryRunner: queryRunner,
 				});
-				if (ifTokenValidServiceResult.isErr())
-        {
-          logger.error(logConstruct(`VerifyUserQueryHandler`, `IfTokenValidService`, ifTokenValidServiceResult.error.message));
+				if (ifTokenValidServiceResult.isErr()) {
+					logger.error(
+						logConstruct(
+							`VerifyUserQueryHandler`,
+							`IfTokenValidService`,
+							ifTokenValidServiceResult.error.message
+						)
+					);
 					return DataResponseFactory.error(
 						ifTokenValidServiceResult.error.status,
 						ifTokenValidServiceResult.error.message
 					);
-        }
+				}
 
 				message = ifTokenValidServiceResult.value.message;
-        logger.info(logConstruct(`VerifyUserQueryHandler`, `IfTokenValidService`, `Token Validity Check Success: Result:${message}`));
+				logger.info(
+					logConstruct(
+						`VerifyUserQueryHandler`,
+						`IfTokenValidService`,
+						`Token Validity Check Success: Result:${message}`
+					)
+				);
 
 				await queryRunner.commitTransaction();
-        logger.info(logConstruct(`VerifyUserQueryHandler`, `handle`, `Commit Transaction`));
+				logger.info(logConstruct(`VerifyUserQueryHandler`, `handle`, `Commit Transaction`));
 			} else {
 				// If token is expired then generate new Token (Db Service)
 				const ifTokenIsNotValidServiceResult =
@@ -186,23 +230,34 @@ export class VerifyUserQueryHandler
 						userId: isValidTokenResult.userId,
 						queryRunner: queryRunner,
 					});
-				if (ifTokenIsNotValidServiceResult.isErr())
-        {
-          logger.error(logConstruct(`VerifyUserQueryHandler`, `IfTokenIsNotValidService`, ifTokenIsNotValidServiceResult.error.message));
+				if (ifTokenIsNotValidServiceResult.isErr()) {
+					logger.error(
+						logConstruct(
+							`VerifyUserQueryHandler`,
+							`IfTokenIsNotValidService`,
+							ifTokenIsNotValidServiceResult.error.message
+						)
+					);
 					return DataResponseFactory.error(
 						ifTokenIsNotValidServiceResult.error.status,
 						ifTokenIsNotValidServiceResult.error.message
 					);
-        }
+				}
 
 				const result: IIfTokenIsNotValidServiceResult =
 					ifTokenIsNotValidServiceResult.value;
 				const users: IUsers = result.users;
 
-        logger.info(logConstruct(`VerifyUserQueryHandler`, `IfTokenIsNotValidService`, `Token Validity Check Success: Result:${result?.message}`));
+				logger.info(
+					logConstruct(
+						`VerifyUserQueryHandler`,
+						`IfTokenIsNotValidService`,
+						`Token Validity Check Success: Result:${result?.message}`
+					)
+				);
 
 				await queryRunner.commitTransaction();
-        logger.info(logConstruct(`VerifyUserQueryHandler`, `handle`, `Commit Transaction`));
+				logger.info(logConstruct(`VerifyUserQueryHandler`, `handle`, `Commit Transaction`));
 
 				// Send Email to User Notification
 				// User Verification Token Email Send Integration Event
@@ -220,7 +275,13 @@ export class VerifyUserQueryHandler
 					);
 				await medaitR.publish(userVerificationTokenEmailIntegrationEventService);
 
-        logger.info(logConstruct(`VerifyUserQueryHandler`, `UserVerificationTokenEmailIntegrationEventService`, `User Verification Token Email Send Integration Event Success`));
+				logger.info(
+					logConstruct(
+						`VerifyUserQueryHandler`,
+						`UserVerificationTokenEmailIntegrationEventService`,
+						`User Verification Token Email Send Integration Event Success`
+					)
+				);
 
 				message = result.message;
 			}
@@ -235,15 +296,26 @@ export class VerifyUserQueryHandler
 					data: verifyUserResponseDto,
 					key: ENCRYPTION_KEY,
 				});
-			if (verifyUserEncryptResponseServiceResult.isErr())
-      {
-        logger.error(logConstruct(`VerifyUserQueryHandler`, `VerifyUserEncryptResponseService`, verifyUserEncryptResponseServiceResult.error.message));
+			if (verifyUserEncryptResponseServiceResult.isErr()) {
+				logger.error(
+					logConstruct(
+						`VerifyUserQueryHandler`,
+						`VerifyUserEncryptResponseService`,
+						verifyUserEncryptResponseServiceResult.error.message
+					)
+				);
 				return DataResponseFactory.error(
 					verifyUserEncryptResponseServiceResult.error.status,
 					verifyUserEncryptResponseServiceResult.error.message
 				);
-      }
-      logger.info(logConstruct(`VerifyUserQueryHandler`, `VerifyUserEncryptResponseService`, `Encrypt Success`));
+			}
+			logger.info(
+				logConstruct(
+					`VerifyUserQueryHandler`,
+					`VerifyUserEncryptResponseService`,
+					`Encrypt Success`
+				)
+			);
 
 			return DataResponseFactory.Response(
 				true,
@@ -252,15 +324,17 @@ export class VerifyUserQueryHandler
 			);
 		} catch (ex) {
 			const error = ex as Error;
-      logger.error(logConstruct(`VerifyUserQueryHandler`, `handle`, error.message,ex));
+			logger.error(logConstruct(`VerifyUserQueryHandler`, `handle`, error.message, ex));
 			if (queryRunner.isTransactionActive) {
 				await queryRunner.rollbackTransaction();
-        logger.warn(logConstruct(`VerifyUserQueryHandler`, `handle`, `Rollback Transaction`));
+				logger.warn(
+					logConstruct(`VerifyUserQueryHandler`, `handle`, `Rollback Transaction`)
+				);
 			}
 			return DataResponseFactory.error(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
 		} finally {
 			await queryRunner.release();
-      logger.info(logConstruct(`VerifyUserQueryHandler`, `handle`, `Release Transaction`));
+			logger.info(logConstruct(`VerifyUserQueryHandler`, `handle`, `Release Transaction`));
 		}
 	}
 }

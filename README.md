@@ -19,6 +19,7 @@ This project demonstrates a modular monolithic architecture using Express.js. It
 - Redis Cache
 
 ## Db Library
+https://github.com/KishorNaik/Modular_Monolithic_Architecture_Db_Library
 
 ## .env file
 
@@ -28,6 +29,10 @@ This project demonstrates a modular monolithic architecture using Express.js. It
 # PORT
 PORT = 3000
 
+# TOKEN
+SECRET_KEY =
+REFRESH_SECRET_KEY =
+
 # LOG
 LOG_FORMAT = dev
 LOG_DIR = ../logs
@@ -36,6 +41,30 @@ LOG_DIR = ../logs
 ORIGIN = *
 CREDENTIALS = true
 
+# Database
+DB_HOST = localhost
+#Local Docker
+#DB_HOST=host.docker.internal
+DB_PORT = 5432
+DB_USERNAME = postgres
+DB_PASSWORD =
+DB_DATABASE = mma
+
+# Redis
+REDIS_HOST = 127.0.0.1
+#Local Docker
+#DB_HOST=host.docker.internal
+#REDIS_USERNAME = username
+#REDIS_PASSWORD = password
+REDIS_DB = 0
+REDIS_PORT = 6379
+
 # RabbitMQ
 RABBITMQ_URL = amqp://guest:guest@localhost:5672
+
+#AES
+ENCRYPTION_KEY=RWw5ejc0Wzjq0i0T2ZTZhcYu44fQI5M10
+
+#Rate Limit Size
+RATE_LIMITER=1000
 ```

@@ -68,7 +68,13 @@ export class UserVerificationTokenEmailIntegrationEventServiceHandler
 					userVerificationTokenEmailIntegrationEventRequestValidationServiceResult.error.message
 				);
 
-      logger.info(logConstruct(`UserVerificationTokenEmailIntegrationEventServiceHandler`, `UserVerificationTokenEmailIntegrationEventRequestValidationService`, `Validation Success`));
+			logger.info(
+				logConstruct(
+					`UserVerificationTokenEmailIntegrationEventServiceHandler`,
+					`UserVerificationTokenEmailIntegrationEventRequestValidationService`,
+					`Validation Success`
+				)
+			);
 
 			// Email Send
 			const sendUserEmailVerificationTokenServiceResult =
@@ -76,7 +82,13 @@ export class UserVerificationTokenEmailIntegrationEventServiceHandler
 			if (sendUserEmailVerificationTokenServiceResult.isErr())
 				throw new Error(sendUserEmailVerificationTokenServiceResult.error.message);
 
-      logger.info(logConstruct(`UserVerificationTokenEmailIntegrationEventServiceHandler`, `SendUserEmailVerificationTokenService`, `Email Send Success`));
+			logger.info(
+				logConstruct(
+					`UserVerificationTokenEmailIntegrationEventServiceHandler`,
+					`SendUserEmailVerificationTokenService`,
+					`Email Send Success`
+				)
+			);
 
 			// Update User verification Flag
 			const isVerificationEmailSendIntegrationEventRequestDto: IsVerificationEmailSendIntegrationEventRequestDto =
@@ -87,10 +99,23 @@ export class UserVerificationTokenEmailIntegrationEventServiceHandler
 					isVerificationEmailSendIntegrationEventRequestDto
 				)
 			);
-      logger.info(logConstruct(`UserVerificationTokenEmailIntegrationEventServiceHandler`, `IsVerificationEmailSendIntegrationEventService`, `Update User verification Flag Success`));
+			logger.info(
+				logConstruct(
+					`UserVerificationTokenEmailIntegrationEventServiceHandler`,
+					`IsVerificationEmailSendIntegrationEventService`,
+					`Update User verification Flag Success`
+				)
+			);
 		} catch (ex) {
-      const error=ex as Error
-      logger.error(logConstruct(`UserVerificationTokenEmailIntegrationEventServiceHandler`, `handle`, error.message, `error:${ex}`));
+			const error = ex as Error;
+			logger.error(
+				logConstruct(
+					`UserVerificationTokenEmailIntegrationEventServiceHandler`,
+					`handle`,
+					error.message,
+					`error:${ex}`
+				)
+			);
 			throw ex;
 		}
 	}
