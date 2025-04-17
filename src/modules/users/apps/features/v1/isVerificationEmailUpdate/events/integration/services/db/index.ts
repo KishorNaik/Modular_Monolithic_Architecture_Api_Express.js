@@ -17,6 +17,7 @@ import { UserSharedCacheService } from '@/modules/users/shared/cache';
 import { IUsers } from '@/modules/users/shared/types';
 import { IsVerificationEmailSendIntegrationEventMapEntityService } from '../mapEntity';
 import { BoolEnum } from '@kishornaik/mma_db/dist/core/shared/models/enums/bool.enum';
+import { UpdateRowVersionService } from '@/modules/users/shared/services/updateRowVersion';
 
 export interface IIIsVerificationEmailSendUpdateDbServiceParameters {
 	request: IsVerificationEmailSendIntegrationEventRequestDto;
@@ -34,7 +35,7 @@ export class IsVerificationEmailSendUpdateDbService
 	private readonly _updateUserSettingsService: UpdateUserSettingsService;
 	private readonly _userSharedCacheService: UserSharedCacheService;
 	private readonly _isVerificationEmailSendIntegrationEventMapEntityService: IsVerificationEmailSendIntegrationEventMapEntityService;
-	private readonly _updateUserRowVersionService: UpdateUserVersionService;
+	private readonly _updateUserRowVersionService: UpdateRowVersionService;
 
 	public constructor() {
 		this._updateUserSettingsService = Container.get(UpdateUserSettingsService);
@@ -42,7 +43,7 @@ export class IsVerificationEmailSendUpdateDbService
 		this._isVerificationEmailSendIntegrationEventMapEntityService = Container.get(
 			IsVerificationEmailSendIntegrationEventMapEntityService
 		);
-		this._updateUserRowVersionService = Container.get(UpdateUserVersionService);
+		this._updateUserRowVersionService = Container.get(UpdateRowVersionService);
 	}
 
 	public async handleAsync(
@@ -96,15 +97,15 @@ export class IsVerificationEmailSendUpdateDbService
 				);
 
 			// Update Row Version for Cache Update
-			const userEntity: UserEntity = new UserEntity();
-			userEntity.identifier = users.identifier;
-			userEntity.status = StatusEnum.INACTIVE;
-			userEntity.modified_date = new Date();
 			const updateRowVersionServiceResult =
-				await this._updateUserRowVersionService.handleAsync(userEntity, queryRunner);
+				await this._updateUserRowVersionService.handleAsync({
+          queryRunner:queryRunner,
+          status: StatusEnum.INACTIVE,
+          userId:users.identifier
+        });
 			if (updateRowVersionServiceResult.isErr())
 				return ResultExceptionFactory.error(
-					updateRowVersionServiceResult.error.statusCode,
+					updateRowVersionServiceResult.error.status,
 					updateRowVersionServiceResult.error.message
 				);
 

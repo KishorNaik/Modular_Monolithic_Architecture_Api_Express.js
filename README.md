@@ -1,31 +1,20 @@
-# RabbitMq demo using expressJs and Event driven approach
+# Modular Monolithic Architecture
+## Overview
+This project demonstrates a modular monolithic architecture using Express.js. It aims to showcase a scalable and maintainable approach to building monolithic applications with modular components.
 
-- Publisher and Subscriber mode
-- Request and Reply mode
+## Features
+- Organized module structure for scalability using vertical slice architecture
+- Event-driven architecture, enabling asynchronous operations and decoupled communication
+- Adherence to SOLID principles to ensure clean and maintainable code
+- Separation of concerns using independent modules
 
-## Install Docker Desktop
+## Technologies
+- Node.js (Runtime)
+- Express.js (Web framework)
+- PostgreSQL (Database)
+- Redis Cache
 
-- https://www.docker.com/products/docker-desktop
-
-## Install RabbitMq Docker Image
-
-- Run the following commands to start a RabbitMQ container:
-
-```bash
-# Pull the RabbitMQ Docker image
-docker pull rabbitmq:3-management
-
-# Run the RabbitMQ container
-docker run -d --hostname my-rabbit --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
-```
-
-- 5672 is the port for AMQP (used by your application to connect to RabbitMQ).
-
-- 15672 is the port for the RabbitMQ management UI (accessible via http://localhost:15672).
-
-- You can access the RabbitMQ management UI with the default credentials:
-    - Username: guest
-    - Password: guest
+## Db Library
 
 ## .env file
 

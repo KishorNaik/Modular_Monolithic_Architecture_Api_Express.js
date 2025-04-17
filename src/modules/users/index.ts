@@ -1,11 +1,17 @@
 import Container from 'typedi';
-import { UpdateUserSettingsService, UpdateUserVersionService } from '@kishornaik/mma_db';
+import { UpdateUserCommunicationService, UpdateUserCredentialsService, UpdateUserKeysService, UpdateUserService, UpdateUserSettingsService, UpdateUserVersionService } from '@kishornaik/mma_db';
 import { CreateUserController } from './apps/features/v1/createUsers';
+import { VerifyUserController } from './apps/features/v1/verifyUsers';
 
 Container.set<UpdateUserSettingsService>(
 	UpdateUserSettingsService,
 	new UpdateUserSettingsService()
 );
+Container.set<UpdateUserService>(UpdateUserService, new UpdateUserService());
+Container.set<UpdateUserCommunicationService>(UpdateUserCommunicationService,new UpdateUserCommunicationService());
+Container.set<UpdateUserCredentialsService>(UpdateUserCredentialsService,new UpdateUserCredentialsService());
+Container.set<UpdateUserKeysService>(UpdateUserKeysService,new UpdateUserKeysService());
+
 Container.set<UpdateUserVersionService>(UpdateUserVersionService, new UpdateUserVersionService());
 
-export const userModule: Function[] = [CreateUserController];
+export const userModule: Function[] = [CreateUserController,VerifyUserController];

@@ -228,7 +228,7 @@ export class CreateUserCommandHandler
 			const aesResponseDto: AesResponseDto =
 				createUserEncryptResponseServiceResult.value.aesResponseDto;
 
-			// Shared Cache service
+			// Update Cache service
 			const userCachedSharedServiceResult = await this._userSharedCacheService.handleAsync({
 				identifier: createUserResponseDto.identifier,
 				status: StatusEnum.INACTIVE,
