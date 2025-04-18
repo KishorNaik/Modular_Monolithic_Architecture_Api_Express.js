@@ -50,7 +50,7 @@ export class IsVerificationEmailSendIntegrationEventServiceHandler
 		notification: IsVerificationEmailSendIntegrationEventService
 	): Promise<void> {
 		const queryRunner = getQueryRunner();
-    await queryRunner.connect();
+		await queryRunner.connect();
 		try {
 			// @guard
 			if (!notification) throw new Error('Invalid notification');
@@ -71,7 +71,7 @@ export class IsVerificationEmailSendIntegrationEventServiceHandler
 				);
 
 			// Db Service
-			await queryRunner.startTransaction("SERIALIZABLE");
+			await queryRunner.startTransaction('SERIALIZABLE');
 
 			const isVerificationEmailSendUpdateDbServiceResult =
 				await this._isVerificationEmailSendUpdateDbService.handleAsync({

@@ -115,27 +115,25 @@ export class RedisHelper {
 	}
 }
 
-export const getIORedisConnection=(): ConnectionOptions=>{
-  const env=process.env.NODE_ENV;
-  const isLocal=env=='development';
+export const getIORedisConnection = (): ConnectionOptions => {
+	const env = process.env.NODE_ENV;
+	const isLocal = env == 'development';
 
-  let connectionOptions: ConnectionOptions;
+	let connectionOptions: ConnectionOptions;
 
-  if(isLocal){
-    connectionOptions={
-      host:REDIS_HOST,
-      port:parseInt(REDIS_PORT),
-    }
-  }
-  else
-  {
-    connectionOptions={
-      host:REDIS_HOST,
-      port:parseInt(REDIS_PORT),
-      username:REDIS_USERNAME,
-      password:REDIS_PASSWORD
-    }
-  }
+	if (isLocal) {
+		connectionOptions = {
+			host: REDIS_HOST,
+			port: parseInt(REDIS_PORT),
+		};
+	} else {
+		connectionOptions = {
+			host: REDIS_HOST,
+			port: parseInt(REDIS_PORT),
+			username: REDIS_USERNAME,
+			password: REDIS_PASSWORD,
+		};
+	}
 
-  return connectionOptions;
-}
+	return connectionOptions;
+};

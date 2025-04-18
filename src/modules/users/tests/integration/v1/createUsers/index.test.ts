@@ -75,7 +75,7 @@ describe(`Create User Integration Test`, () => {
 		const aesRequestDto: AesRequestDto = new AesRequestDto();
 		aesRequestDto.body = encryptRequestBody;
 
-    	await initializeDatabase();
+		await initializeDatabase();
 
 		const response = await request(app).post('/api/v1/users').send(aesRequestDto);
 		expect(response.status).toBe(201);
