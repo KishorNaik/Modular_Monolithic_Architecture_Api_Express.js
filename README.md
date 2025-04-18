@@ -17,6 +17,7 @@ This project demonstrates a modular monolithic architecture using Express.js. It
 - Express.js (Web framework)
 - PostgreSQL (Database)
 - Redis Cache
+- BullMq
 
 ## Db Library
 
