@@ -422,7 +422,7 @@ export class CreateUserCommandHandler
 
 			// Domain Event Service (Background Job)
 			// Is Email Verification Notification Integration Event
-			await publishQueuesAsync(userCreatedDomainEventQueues,`send-email-verification`, {
+			await publishQueuesAsync(userCreatedDomainEventQueues, `send-email-verification`, {
 				identifier: entity.entity.users.identifier,
 				email: entity.entity.communication.email,
 				fullName: `${entity.entity.users.firstName} ${entity.entity.users.lastName}`,
