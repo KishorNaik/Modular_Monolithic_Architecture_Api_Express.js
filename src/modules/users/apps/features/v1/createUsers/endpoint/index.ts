@@ -24,7 +24,7 @@ import { ENCRYPTION_KEY } from '@/config';
 import Container from 'typedi';
 import mediatR from '@/shared/medaitR/index';
 import { IHashPasswordResult } from '@/shared/services/users/user.HashPassword.Service';
-import { getQueryRunner, StatusEnum } from '@kishornaik/mma_db';
+import { getQueryRunner, initializeDatabase, StatusEnum } from '@kishornaik/mma_db';
 import { UserSharedCacheService } from '@/modules/users/shared/cache';
 import { ValidationMiddleware } from '@/middlewares/validation.middleware';
 import { CreateUserDecryptRequestService } from './services/decryptRequest';
@@ -39,8 +39,12 @@ import { CreateUserDbService } from './services/db';
 import { CreateUserMapResponseService } from './services/mapResponse';
 import { CreateUserEncryptResponseService } from './services/encryptResponse';
 import { CreateUserRequestDto, CreateUserResponseDto } from '../contracts';
-import { UserCreatedDomainEventService } from '../events/domain/userCreated';
+import { IUserCreatedDomainEventQueueJob, UserCreatedDomainEventService } from '../events/domain/userCreated';
 import { logConstruct, logger } from '@/shared/utils/helpers/loggers';
+import { backgroundJobAsync } from '@/shared/utils/miscellaneous/jobs/job';
+import { runWorkers, setQueues } from '@/shared/utils/helpers/bullMq/queues';
+
+const userCreatedDomainEventQueues=setQueues('userCreatedDomainEventQueues');
 
 // @region Controller
 @JsonController('/api/v1/users')
@@ -108,7 +112,7 @@ export class CreateUserCommandHandler
 
 	public async handle(value: CreateUserCommand): Promise<ApiDataResponse<AesResponseDto>> {
 		const queryRunner = getQueryRunner();
-		await queryRunner.connect();
+    await queryRunner.connect();
 		try {
 			if (!value)
 				return DataResponseFactory.error(StatusCodes.BAD_REQUEST, 'Invalid command');
@@ -262,7 +266,7 @@ export class CreateUserCommandHandler
 				)
 			);
 
-			await queryRunner.startTransaction();
+			await queryRunner.startTransaction("SERIALIZABLE");
 			logger.info(logConstruct(`CreateUserCommandHandler`, `handle`, `Start Transaction`));
 
 			// Db Service
@@ -413,24 +417,14 @@ export class CreateUserCommandHandler
 
 			logger.info(logConstruct(`CreateUserCommandHandler`, `handle`, `Commit Transaction`));
 
-			// Domain Event Service
+			// Domain Event Service (Background Job)
 			// Is Email Verification Notification Integration Event
-			await mediatR.publish(
-				new UserCreatedDomainEventService(
-					entity.entity.users.identifier,
-					entity.entity.communication.email,
-					`${entity.entity.users.firstName} ${entity.entity.users.lastName}`,
-					entity.entity.settings.emailVerificationToken
-				)
-			);
-
-			logger.info(
-				logConstruct(
-					`CreateUserCommandHandler`,
-					`UserCreatedDomainEventService`,
-					`Domain Event Success`
-				)
-			);
+      await userCreatedDomainEventQueues.add(`send-email-verification`,{
+        identifier: entity.entity.users.identifier,
+        email: entity.entity.communication.email,
+        fullName: `${entity.entity.users.firstName} ${entity.entity.users.lastName}`,
+        token: entity.entity.settings.emailVerificationToken
+      } as IUserCreatedDomainEventQueueJob);
 
 			return DataResponseFactory.Response(
 				true,
@@ -449,9 +443,41 @@ export class CreateUserCommandHandler
 			}
 			return DataResponseFactory.error(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
 		} finally {
-			await queryRunner.release();
+      await queryRunner.release();
 			logger.info(logConstruct(`CreateUserCommandHandler`, `handle`, `Release Transaction`));
 		}
 	}
 }
+// @endregion
+
+// @endregion set Workers
+const userCreatedDomainEventWorkers=runWorkers(`userCreatedDomainEventQueues`,async (job)=>{
+  logger.info(logConstruct("userCreatedDomainEventWorkers","worker",`Job:${job.id}: started`));
+
+  const jobData=job.data as IUserCreatedDomainEventQueueJob;
+
+  logger.info(logConstruct("userCreatedDomainEventWorkers","worker",`Job for UserId:${jobData.identifier}`));
+
+  await mediatR.publish(
+    new UserCreatedDomainEventService(
+        jobData.identifier,
+        jobData.email,
+        jobData.fullName,
+        jobData.token
+    ));
+
+    logger.info(
+      logConstruct(
+        `CreateUserCommandHandler`,
+        `UserCreatedDomainEventService`,
+        `Domain Event Success`
+      )
+    );
+
+})
+
+// Handle errors
+userCreatedDomainEventWorkers.on('failed', (job, err) => {
+  logger.error(logConstruct("userCreatedDomainEventWorkers","worker",`Job:${job.id} failed:`, err));
+});
 // @endregion

@@ -8,6 +8,13 @@ import { logConstruct, logger } from '@/shared/utils/helpers/loggers';
 import { StatusEnum } from '@kishornaik/mma_db';
 import { NotificationData, NotificationHandler, notificationHandler } from 'mediatr-ts';
 
+export interface IUserCreatedDomainEventQueueJob {
+  identifier: string;
+  email: string;
+  fullName: string;
+  token: string;
+}
+
 // @region Domain Event
 @sealed
 export class UserCreatedDomainEventService extends NotificationData {

@@ -6,6 +6,8 @@ import { ResultError, ResultExceptionFactory } from '../../exceptions/results';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 import CircuitBreaker from 'opossum';
+import IORedis from 'ioredis';
+import { ConnectionOptions } from 'bullmq';
 
 const circuitBreakerOptions = {
 	timeout: 5000, // If Redis takes longer than 5 seconds, trigger a failure
@@ -111,4 +113,29 @@ export class RedisHelper {
 			this.isConnected = false;
 		}
 	}
+}
+
+export const getIORedisConnection=(): ConnectionOptions=>{
+  const env=process.env.NODE_ENV;
+  const isLocal=env=='development';
+
+  let connectionOptions: ConnectionOptions;
+
+  if(isLocal){
+    connectionOptions={
+      host:REDIS_HOST,
+      port:parseInt(REDIS_PORT),
+    }
+  }
+  else
+  {
+    connectionOptions={
+      host:REDIS_HOST,
+      port:parseInt(REDIS_PORT),
+      username:REDIS_USERNAME,
+      password:REDIS_PASSWORD
+    }
+  }
+
+  return connectionOptions;
 }

@@ -19,11 +19,11 @@ const app = appInstance.getServer();
 
 describe(`Create User Integration Test`, () => {
 	beforeEach(async () => {
-		await initializeDatabase();
+		//await initializeDatabase();
 	});
 
 	afterEach(async () => {
-		await destroyDatabase();
+		//await destroyDatabase();
 	});
 
 	// node --trace-deprecation --test --test-name-pattern='should_return_false_aes_body_validation_failed' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/createUsers/index.test.ts
@@ -65,8 +65,8 @@ describe(`Create User Integration Test`, () => {
 		const createUserRequestDto: CreateUserRequestDto = new CreateUserRequestDto();
 		createUserRequestDto.firstName = 'eshann';
 		createUserRequestDto.lastName = 'naik';
-		createUserRequestDto.email = 'eshaan.naik.dev14@gmail.com';
-		createUserRequestDto.mobileNo = '9167791124';
+		createUserRequestDto.email = 'eshaan.naik.dev60@gmail.com';
+		createUserRequestDto.mobileNo = '9167791160';
 		createUserRequestDto.password = 'Shree@123';
 
 		const aes = new AES(ENCRYPTION_KEY);
@@ -75,10 +75,12 @@ describe(`Create User Integration Test`, () => {
 		const aesRequestDto: AesRequestDto = new AesRequestDto();
 		aesRequestDto.body = encryptRequestBody;
 
+    	await initializeDatabase();
+
 		const response = await request(app).post('/api/v1/users').send(aesRequestDto);
 		expect(response.status).toBe(201);
-		setTimeout(() => {
-			process.exit(0);
-		}, 2000);
+		// setTimeout(() => {
+		// 	process.exit(0);
+		// }, 50000);
 	});
 });

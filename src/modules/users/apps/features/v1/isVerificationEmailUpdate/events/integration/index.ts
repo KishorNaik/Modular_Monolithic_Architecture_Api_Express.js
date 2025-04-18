@@ -9,6 +9,7 @@ import {
 	IsVerificationEmailSendUpdateDbService,
 } from './services/db';
 import { UserSharedCacheService } from '@/modules/users/shared/cache';
+import { dbDataSource, initializeDatabase } from '@kishornaik/mma_db/dist/core/config/dbSource';
 
 // @region Integration Event
 export class IsVerificationEmailSendIntegrationEventService extends NotificationData {
@@ -49,7 +50,7 @@ export class IsVerificationEmailSendIntegrationEventServiceHandler
 		notification: IsVerificationEmailSendIntegrationEventService
 	): Promise<void> {
 		const queryRunner = getQueryRunner();
-		await queryRunner.connect();
+    await queryRunner.connect();
 		try {
 			// @guard
 			if (!notification) throw new Error('Invalid notification');
@@ -70,7 +71,7 @@ export class IsVerificationEmailSendIntegrationEventServiceHandler
 				);
 
 			// Db Service
-			await queryRunner.startTransaction();
+			await queryRunner.startTransaction("SERIALIZABLE");
 
 			const isVerificationEmailSendUpdateDbServiceResult =
 				await this._isVerificationEmailSendUpdateDbService.handleAsync({
