@@ -45,7 +45,7 @@ import {
 } from '../events/domain/userCreated';
 import { logConstruct, logger } from '@/shared/utils/helpers/loggers';
 import { backgroundJobAsync } from '@/shared/utils/miscellaneous/jobs/job';
-import { runWorkers, setQueues } from '@/shared/utils/helpers/bullMq/queues';
+import { publishQueuesAsync, runWorkers, setQueues } from '@/shared/utils/helpers/bullMq/queues';
 
 const userCreatedDomainEventQueues = setQueues('userCreatedDomainEventQueues');
 
@@ -422,7 +422,7 @@ export class CreateUserCommandHandler
 
 			// Domain Event Service (Background Job)
 			// Is Email Verification Notification Integration Event
-			await userCreatedDomainEventQueues.add(`send-email-verification`, {
+			await publishQueuesAsync(userCreatedDomainEventQueues,`send-email-verification`, {
 				identifier: entity.entity.users.identifier,
 				email: entity.entity.communication.email,
 				fullName: `${entity.entity.users.firstName} ${entity.entity.users.lastName}`,
@@ -488,7 +488,12 @@ const userCreatedDomainEventWorkers = runWorkers(`userCreatedDomainEventQueues`,
 // Handle errors
 userCreatedDomainEventWorkers.on('failed', (job, err) => {
 	logger.error(
-		logConstruct('userCreatedDomainEventWorkers', 'worker', `Job:${job.id} failed for UserId:${job.data?.identifier}`, err)
+		logConstruct(
+			'userCreatedDomainEventWorkers',
+			'worker',
+			`Job:${job.id} failed for UserId:${job.data?.identifier}`,
+			err
+		)
 	);
 });
 // @endregion

@@ -65,8 +65,8 @@ describe(`Create User Integration Test`, () => {
 		const createUserRequestDto: CreateUserRequestDto = new CreateUserRequestDto();
 		createUserRequestDto.firstName = 'eshann';
 		createUserRequestDto.lastName = 'naik';
-		createUserRequestDto.email = 'eshaan.naik.dev60@gmail.com';
-		createUserRequestDto.mobileNo = '9167791160';
+		createUserRequestDto.email = 'eshaan.naik.dev62@gmail.com';
+		createUserRequestDto.mobileNo = '9167791162';
 		createUserRequestDto.password = 'Shree@123';
 
 		const aes = new AES(ENCRYPTION_KEY);
