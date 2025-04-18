@@ -488,7 +488,7 @@ const userCreatedDomainEventWorkers = runWorkers(`userCreatedDomainEventQueues`,
 // Handle errors
 userCreatedDomainEventWorkers.on('failed', (job, err) => {
 	logger.error(
-		logConstruct('userCreatedDomainEventWorkers', 'worker', `Job:${job.id} failed:`, err)
+		logConstruct('userCreatedDomainEventWorkers', 'worker', `Job:${job.id} failed for UserId:${job.data?.identifier}`, err)
 	);
 });
 // @endregion
