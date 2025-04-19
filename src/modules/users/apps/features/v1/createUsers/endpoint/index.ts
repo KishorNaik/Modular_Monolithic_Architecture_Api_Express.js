@@ -182,19 +182,20 @@ export class CreateUserCommandHandler
 			);
 
 			// Hash Password Service
-			const createUserHashPasswordServiceResultPromise =this._createUserHashPasswordService.handleAsync({
+			const createUserHashPasswordServiceResultPromise =
+				this._createUserHashPasswordService.handleAsync({
 					password: createUserRequestDto.password,
 				});
-      // generate keys Service
+			// generate keys Service
 			const createUserKeyServiceResultPromise = this._createUserKeysService.handleAsync();
 
-      const [createUserHashPasswordServiceResult, createUserKeyServiceResult] =
-        await Promise.all([
-          createUserHashPasswordServiceResultPromise,
-          createUserKeyServiceResultPromise,
-        ]);
+			const [createUserHashPasswordServiceResult, createUserKeyServiceResult] =
+				await Promise.all([
+					createUserHashPasswordServiceResultPromise,
+					createUserKeyServiceResultPromise,
+				]);
 
-      // Hash Password Service Result
+			// Hash Password Service Result
 			if (createUserHashPasswordServiceResult.isErr()) {
 				logger.error(
 					logConstruct(
@@ -220,7 +221,7 @@ export class CreateUserCommandHandler
 				)
 			);
 
-      // Generate Keys Service Result
+			// Generate Keys Service Result
 			if (createUserKeyServiceResult.isErr()) {
 				logger.error(
 					logConstruct(
