@@ -1,2 +1,2 @@
-export * from "./contracts/index";
-export * from "./endpoints/index";
+export * from './contracts/index';
+export * from './endpoints/index';

@@ -28,4 +28,8 @@ Container.set<UpdateUserKeysService>(UpdateUserKeysService, new UpdateUserKeysSe
 
 Container.set<UpdateUserVersionService>(UpdateUserVersionService, new UpdateUserVersionService());
 
-export const userModule: Function[] = [CreateUserController, VerifyUserController,UserSignInController];
+export const userModule: Function[] = [
+	CreateUserController,
+	VerifyUserController,
+	UserSignInController,
+];
