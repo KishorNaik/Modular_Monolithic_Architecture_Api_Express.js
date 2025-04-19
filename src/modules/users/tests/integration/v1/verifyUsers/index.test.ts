@@ -67,7 +67,7 @@ describe(`Verify User Integration Test`, () => {
 	// node --trace-deprecation --test --test-name-pattern='should_return_true_when_token_is_expired' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/verifyUsers/index.test.ts
 	it(`should_return_true_when_token_is_expired`, async () => {
 		const response = await request(app).get(
-			'/api/v1/users/verify/88bbbf46-a897-52a9-ef02-086610b8234a'
+			'/api/v1/users/verify/d88f46c1-4f67-e22d-9336-7a8024db767b'
 		);
 		expect(response.status).toBe(200);
 		setTimeout(() => {

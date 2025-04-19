@@ -9,6 +9,7 @@ import {
 } from '@kishornaik/mma_db';
 import { CreateUserController } from './apps/features/v1/createUsers';
 import { VerifyUserController } from './apps/features/v1/verifyUsers';
+import { UserSignInController } from './apps/features/v1/signIn';
 
 Container.set<UpdateUserSettingsService>(
 	UpdateUserSettingsService,
@@ -27,4 +28,4 @@ Container.set<UpdateUserKeysService>(UpdateUserKeysService, new UpdateUserKeysSe
 
 Container.set<UpdateUserVersionService>(UpdateUserVersionService, new UpdateUserVersionService());
 
-export const userModule: Function[] = [CreateUserController, VerifyUserController];
+export const userModule: Function[] = [CreateUserController, VerifyUserController,UserSignInController];
