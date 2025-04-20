@@ -27,7 +27,7 @@ Container.set<GetUserRowVersionService>(GetUserRowVersionService, new GetUserRow
 export interface IUserSharedCacheServiceParameters {
 	identifier: string;
 	status: StatusEnum;
-	queryRunner: QueryRunner;
+	queryRunner?: QueryRunner;
 }
 
 export interface IUserSharedCacheServiceResult {
@@ -67,9 +67,6 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 
 			if (params.status === null)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid status');
-
-			if (!params.queryRunner)
-				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'invalid queryRunner');
 
 			const { identifier, status, queryRunner } = params;
 
@@ -164,7 +161,7 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 interface IGetUserByIdentifierDataServiceParameters {
 	identifier: string;
 	status: StatusEnum;
-	queryRunner: QueryRunner;
+	queryRunner?: QueryRunner;
 	isCached?: boolean;
 }
 
@@ -199,12 +196,6 @@ class GetUserByIdentifierDataService implements IGetUserByIdentifierDataService 
 
 			if (params.status === null)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid status');
-
-			if (!params.queryRunner)
-				return ResultExceptionFactory.error(
-					StatusCodes.BAD_REQUEST,
-					'Invalid query Runner'
-				);
 
 			// Get users data
 			const getUserByIdentifierDomainEventRequestDto: GetUserByIdentifierDomainEventRequestDto =
@@ -242,7 +233,7 @@ interface IUserSetCacheServiceParameters {
 	identifier: string;
 	status: StatusEnum;
 	primaryCacheName: string;
-	queryRunner: QueryRunner;
+	queryRunner?: QueryRunner;
 	isCached?: boolean;
 }
 
@@ -276,9 +267,6 @@ class UserSetCacheService implements IUserSetCacheService {
 
 			if (!params.primaryCacheName)
 				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid cache name');
-
-			if (!params.queryRunner)
-				return ResultExceptionFactory.error(StatusCodes.BAD_REQUEST, 'Invalid queryRunner');
 
 			const { identifier, status, primaryCacheName, queryRunner } = params;
 

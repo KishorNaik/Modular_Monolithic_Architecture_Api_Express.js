@@ -10,6 +10,7 @@ import {
 import { CreateUserController } from './apps/features/v1/createUsers';
 import { VerifyUserController } from './apps/features/v1/verifyUsers';
 import { UserSignInController } from './apps/features/v1/signIn';
+import { GetUsersByIdentifierController } from './apps/features/v1/getUsersByIdentifier';
 
 Container.set<UpdateUserSettingsService>(
 	UpdateUserSettingsService,
@@ -32,4 +33,5 @@ export const userModule: Function[] = [
 	CreateUserController,
 	VerifyUserController,
 	UserSignInController,
+  GetUsersByIdentifierController
 ];

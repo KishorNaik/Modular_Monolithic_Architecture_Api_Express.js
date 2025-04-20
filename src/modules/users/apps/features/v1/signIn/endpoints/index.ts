@@ -216,7 +216,7 @@ class UserSignInCommandHandler
 				)
 			);
 
-			// is User Valid (Check User Status, Check password with Hash Password)
+			// is User Valid (Check User Status, Check raw password with Hash Password)
 			const userSignInValidateCredentialsServiceResult =
 				await this._userSignInValidateCredentialsService.handleAsync({
 					users: users,
