@@ -10,6 +10,7 @@ This project demonstrates a modular monolithic architecture using Express.js. It
 - Event-driven architecture, enabling asynchronous operations and decoupled communication
 - Adherence to SOLID principles to ensure clean and maintainable code
 - Separation of concerns using independent modules
+- JWT authentication with HMAC for secure and efficient token validation
 
 ## Technologies
 
