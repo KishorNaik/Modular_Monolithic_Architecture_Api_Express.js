@@ -33,5 +33,5 @@ export const userModule: Function[] = [
 	CreateUserController,
 	VerifyUserController,
 	UserSignInController,
-  GetUsersByIdentifierController
+	GetUsersByIdentifierController,
 ];
