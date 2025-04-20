@@ -8,20 +8,21 @@ import { Ok, Result } from 'neverthrow';
 import Container from 'typedi';
 
 export async function authenticateHmac(req: Request, res: Response, next: NextFunction) {
-	const payload = req.method === 'GET' || req.method === 'DELETE'
-    ? req.originalUrl.trim()
-    : JSON.stringify(req.body).replace(/\s+/g, '');
+	const payload =
+		req.method === 'GET' || req.method === 'DELETE'
+			? req.originalUrl.trim()
+			: JSON.stringify(req.body).replace(/\s+/g, '');
 	const receivedSignature = req.headers['x-auth-signature'] as string;
 	const clientId = req.headers['x-client-id'] as string;
 
 	if (!clientId) {
-    logger.error(
-      logConstruct(
-        `authenticateHmac`,
-        `authenticateHmac`,
-        `Forbidden - You do not have permission to access this resource: Client Id is required`
-      )
-    );
+		logger.error(
+			logConstruct(
+				`authenticateHmac`,
+				`authenticateHmac`,
+				`Forbidden - You do not have permission to access this resource: Client Id is required`
+			)
+		);
 		const response = DataResponseFactory.Response<undefined>(
 			false,
 			403,
@@ -32,13 +33,13 @@ export async function authenticateHmac(req: Request, res: Response, next: NextFu
 	}
 
 	if (!receivedSignature) {
-    logger.error(
-      logConstruct(
-        `authenticateHmac`,
-        `authenticateHmac`,
-        `Forbidden - You do not have permission to access this resource: receivedSignature is required`
-      )
-    );
+		logger.error(
+			logConstruct(
+				`authenticateHmac`,
+				`authenticateHmac`,
+				`Forbidden - You do not have permission to access this resource: receivedSignature is required`
+			)
+		);
 		const response = DataResponseFactory.Response<undefined>(
 			false,
 			403,
@@ -50,14 +51,13 @@ export async function authenticateHmac(req: Request, res: Response, next: NextFu
 
 	const secretKeyResult = await getSecretKeyFromDatabaseAsync(clientId);
 	if (secretKeyResult.isErr()) {
-
-    logger.error(
-      logConstruct(
-        `authenticateHmac`,
-        `authenticateHmac`,
-        `Forbidden - You do not have permission to access this resource: ${secretKeyResult.error.message}`
-      )
-    );
+		logger.error(
+			logConstruct(
+				`authenticateHmac`,
+				`authenticateHmac`,
+				`Forbidden - You do not have permission to access this resource: ${secretKeyResult.error.message}`
+			)
+		);
 
 		const response = DataResponseFactory.Response<undefined>(
 			false,
@@ -72,14 +72,13 @@ export async function authenticateHmac(req: Request, res: Response, next: NextFu
 
 	const compareHmacResult = compareHmac(payload, SECRET_KEY, receivedSignature);
 	if (compareHmacResult.isErr()) {
-
-    logger.error(
-      logConstruct(
-        `authenticateHmac`,
-        `authenticateHmac`,
-        `Forbidden - You do not have permission to access this resource: ${compareHmacResult.error.message}`
-      )
-    );
+		logger.error(
+			logConstruct(
+				`authenticateHmac`,
+				`authenticateHmac`,
+				`Forbidden - You do not have permission to access this resource: ${compareHmacResult.error.message}`
+			)
+		);
 
 		const response = DataResponseFactory.Response<undefined>(
 			false,
@@ -98,13 +97,17 @@ const getSecretKeyFromDatabaseAsync = async (
 ): Promise<Result<string, ResultError>> => {
 	// Get secret key from database by clientId
 
-  const getUsersByClientIdService:GetUsersByClientIdService=Container.get(GetUsersByClientIdService);
-  const getUsersByClientIdServiceResult= await getUsersByClientIdService.handleAsync({
-    clientId: clientId,
-  });
-  if(getUsersByClientIdServiceResult.isErr())
-    return ResultExceptionFactory.error(getUsersByClientIdServiceResult.error.status,getUsersByClientIdServiceResult.error.message);
+	const getUsersByClientIdService: GetUsersByClientIdService =
+		Container.get(GetUsersByClientIdService);
+	const getUsersByClientIdServiceResult = await getUsersByClientIdService.handleAsync({
+		clientId: clientId,
+	});
+	if (getUsersByClientIdServiceResult.isErr())
+		return ResultExceptionFactory.error(
+			getUsersByClientIdServiceResult.error.status,
+			getUsersByClientIdServiceResult.error.message
+		);
 
-  const secretKey:string = getUsersByClientIdServiceResult.value.keys.hmacSecretKey;
+	const secretKey: string = getUsersByClientIdServiceResult.value.keys.hmacSecretKey;
 	return new Ok(secretKey);
 };
