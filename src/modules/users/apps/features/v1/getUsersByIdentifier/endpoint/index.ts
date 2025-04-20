@@ -31,6 +31,7 @@ import { IUsers } from '@/modules/users/shared/types';
 import { GetUserByIdentifierValidationRequestService } from './services/validations';
 import { GetUsersByIdentifierResponseMapperService } from './services/mapResponse';
 import { GetUsersByIdentifierResponseEncryptService } from './services/encryptResponse';
+import { authenticateHmac } from '@/middlewares/hmac.middlware';
 
 // @region Controller
 @JsonController('/api/v1/users')
@@ -41,12 +42,17 @@ export class GetUsersByIdentifierController {
 	@HttpCode(StatusCodes.OK)
 	@OnUndefined(StatusCodes.NOT_FOUND)
 	@OnUndefined(StatusCodes.BAD_REQUEST)
-	@UseBefore(authenticateJwt)
+	@UseBefore(authenticateHmac,authenticateJwt)
 	public async get(
 		@Param('identifier') identifier: string,
 		@Req() req: Request,
 		@Res() res: Response
-	) {}
+	) {
+    const requestDto:GetUserByIdentifierRequestDto=new GetUserByIdentifierRequestDto();
+    requestDto.identifier=identifier;
+    const response=await medaitR.send(new GetUserByIdentifierQuery(requestDto,req));
+    return res.status(response.StatusCode).json(response);
+  }
 }
 // @endregion
 
@@ -58,6 +64,7 @@ class GetUserByIdentifierQuery extends RequestData<ApiDataResponse<AesResponseDt
 	public constructor(request: GetUserByIdentifierRequestDto, expressRequest: Request) {
 		super();
 		this._request = request;
+    this._expressRequest=expressRequest;
 	}
 
 	public get request(): GetUserByIdentifierRequestDto {
@@ -103,6 +110,9 @@ class GetUserByIdentifierQueryHandler
 
 			if (!value.request)
 				return DataResponseFactory.error(StatusCodes.BAD_REQUEST, 'Invalid request');
+
+      if(!value.expressRequest)
+        return DataResponseFactory.error(StatusCodes.BAD_REQUEST, 'Invalid express request')
 
 			const { request, expressRequest } = value;
 

@@ -1,5 +1,6 @@
 import { sealed } from '@/shared/utils/decorators/sealed';
 import { ResultError, ResultExceptionFactory } from '@/shared/utils/exceptions/results';
+import { generateSecureRandomString } from '@/shared/utils/helpers/aes';
 import { IServiceHandlerNoParamsAsync } from '@/shared/utils/helpers/services';
 import { Guid } from 'guid-typescript';
 import { StatusCodes } from 'http-status-codes';
@@ -20,7 +21,7 @@ export class CreateUserKeysService implements ICreateUserKeyService {
 	public async handleAsync(): Promise<Result<ICreateUserKeyServiceResult, ResultError>> {
 		try {
 			const result: ICreateUserKeyServiceResult = {
-				aesSecretKey: Guid.create().toString(),
+				aesSecretKey: generateSecureRandomString(32),
 				hmacSecretKey: Guid.create().toString(),
 			};
 

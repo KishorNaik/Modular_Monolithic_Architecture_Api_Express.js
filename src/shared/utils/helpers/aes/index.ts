@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-
+import { randomBytes } from 'crypto';
 import { Service } from 'typedi';
 import { Err, Ok, Result } from 'neverthrow';
 import { ivLength } from '@/shared/models/constant';
@@ -143,4 +143,8 @@ export class AesDecryptWrapper<T extends object> implements IAesDecryptWrapper<T
 			return new Err(new ResultError(StatusCodes.INTERNAL_SERVER_ERROR, ex.message));
 		}
 	}
+}
+
+export function generateSecureRandomString(length: number): string {
+  return randomBytes(length).toString('base64').slice(0, length);
 }
