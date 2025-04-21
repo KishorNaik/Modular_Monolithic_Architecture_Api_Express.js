@@ -1,3 +1,4 @@
+import { UpdateRefreshTokenDbService } from '@/modules/users/shared/services/updateRefreshToken';
 import { UpdateRowVersionService } from '@/modules/users/shared/services/updateRowVersion';
 import { sealed } from '@/shared/utils/decorators/sealed';
 import { ResultError, ResultExceptionFactory } from '@/shared/utils/exceptions/results';
@@ -21,12 +22,11 @@ export interface IUserSignInUpdateService
 @sealed
 @Service()
 export class UserSignInUpdateDbService implements IUserSignInUpdateService {
-	private readonly _updateUserKeysService: UpdateUserKeysService;
-	private readonly _updateRowVersionService: UpdateRowVersionService;
+
+  private readonly _updateRefreshTokenDbService:UpdateRefreshTokenDbService;
 
 	public constructor() {
-		this._updateUserKeysService = Container.get(UpdateUserKeysService);
-		this._updateRowVersionService = Container.get(UpdateRowVersionService);
+    this._updateRefreshTokenDbService=Container.get(UpdateRefreshTokenDbService);
 	}
 
 	public async handleAsync(
@@ -47,27 +47,15 @@ export class UserSignInUpdateDbService implements IUserSignInUpdateService {
 			const queryRunner = params.queryRunner;
 
 			//Update User Key Entity
-			const updateUserKeysResult = await this._updateUserKeysService.handleAsync(
-				userKeys,
-				queryRunner
-			);
-			if (updateUserKeysResult.isErr())
-				return ResultExceptionFactory.error(
-					updateUserKeysResult.error.statusCode,
-					updateUserKeysResult.error.message
-				);
-
-			// Update Row Version
-			const updateRowVersionResult = await this._updateRowVersionService.handleAsync({
-				userId: userEntity.identifier,
-				status: userEntity.status,
-				queryRunner: queryRunner,
-			});
-			if (updateRowVersionResult.isErr())
-				return ResultExceptionFactory.error(
-					updateRowVersionResult.error.status,
-					updateRowVersionResult.error.message
-				);
+      const updateRefreshTokenResult = await this._updateRefreshTokenDbService.handleAsync({
+        entity:{
+          userEntity: userEntity,
+          userKeys: userKeys,
+        },
+        queryRunner: queryRunner
+      });
+      if(updateRefreshTokenResult.isErr())
+        return ResultExceptionFactory.error(updateRefreshTokenResult.error.status,updateRefreshTokenResult.error.message);
 
 			return new Ok(undefined);
 		} catch (ex) {

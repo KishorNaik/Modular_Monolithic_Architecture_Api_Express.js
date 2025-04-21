@@ -1,3 +1,4 @@
+import { MapRefreshTokenUserEntityService } from '@/modules/users/shared/services/mapRefrehToken';
 import { IUsers } from '@/modules/users/shared/types';
 import { sealed } from '@/shared/utils/decorators/sealed';
 import { ResultError, ResultExceptionFactory } from '@/shared/utils/exceptions/results';
@@ -28,6 +29,9 @@ export interface IMapUserSignInEntityService
 @sealed
 @Service()
 export class MapUserSignInEntityService implements IMapUserSignInEntityService {
+
+  private readonly _mapRefreshTokenUserEntityService:MapRefreshTokenUserEntityService;
+
 	public async handleAsync(
 		params: IMapUserSignInEntityServiceParameters
 	): Promise<Result<IMapUserSignInEntityServiceResults, ResultError>> {
@@ -47,26 +51,22 @@ export class MapUserSignInEntityService implements IMapUserSignInEntityService {
 
 			const { refreshToken, users } = params;
 
-			// Map Entity
-			const userEntity = new UserEntity();
-			userEntity.identifier = users.identifier;
-			userEntity.status = users.status;
-			userEntity.modified_date = new Date();
+      const mapRefreshTokenUserEntityServiceResult = await this._mapRefreshTokenUserEntityService.handleAsync({
+        refreshToken,
+        users,
+      });
+      if (mapRefreshTokenUserEntityServiceResult.isErr())
+        return ResultExceptionFactory.error(
+          mapRefreshTokenUserEntityServiceResult.error.status,
+          mapRefreshTokenUserEntityServiceResult.error.message
+        );
 
-			const keysEntity = new UserKeysEntity();
-			keysEntity.identifier = users.keys.identifier;
-			keysEntity.status = users.keys.status;
-			keysEntity.refresh_token = refreshToken;
-			keysEntity.refresh_Token_expires_at = new Date(
-				new Date().getTime() + 24 * 60 * 60 * 1000
-			);
-
-			const result: IMapUserSignInEntityServiceResults = {
-				entity: {
-					userEntity,
-					keys: keysEntity,
-				},
-			};
+      const result: IMapUserSignInEntityServiceResults = {
+        entity: {
+          userEntity: mapRefreshTokenUserEntityServiceResult.value.entity.userEntity,
+          keys: mapRefreshTokenUserEntityServiceResult.value.entity.keys,
+        },
+      };
 
 			return new Ok(result);
 		} catch (ex) {

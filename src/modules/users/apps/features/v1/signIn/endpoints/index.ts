@@ -42,7 +42,7 @@ import { JwtService } from '@/shared/services/users/userJwt.Service';
 import {
 	IUserSignInGenerateJwtAndRefreshTokenServiceResult,
 	UserSignInGenerateJwtAndRefreshTokenService,
-} from './services/generateJwtAndRefresh';
+} from '../../../../../shared/services/generateJwtAndRefresh';
 import { RoleEnum } from '@/shared/models/enums/role.enum';
 import { MapUserSignInEntityService } from './services/mapEntity';
 import { UserSignInUpdateDbService } from './services/db';

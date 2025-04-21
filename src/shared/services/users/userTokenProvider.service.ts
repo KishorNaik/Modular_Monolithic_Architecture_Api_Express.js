@@ -14,23 +14,35 @@ export interface IClaims {
 
 export interface IUserTokenProviderService {
 	getUserId(request: Request): string;
+  getUserIdByJwtToken (accessOrRefreshToken:string): string;
 	getUserRole(request: Request): string;
+  getUserRoleByJwtToken (accessOrRefreshToken:string): string;
 }
 
 @Service()
 export class UserTokenProviderService implements IUserTokenProviderService {
+  getUserIdByJwtToken(accessOrRefreshToken: string): string {
+    const decoded: IClaims = jwt.decode(
+			accessOrRefreshToken,
+		) as IClaims;
+		return decoded.id;
+  }
+  getUserRoleByJwtToken(accessOrRefreshToken: string): string {
+    const decoded: IClaims = jwt.decode(
+			accessOrRefreshToken,
+		) as IClaims;
+		return decoded.role;
+  }
 	public getUserId(request: Request): string {
-		const decoded: IClaims = jwt.verify(
+		const decoded: IClaims = jwt.decode(
 			request.headers.authorization.split(' ')[1],
-			SECRET_KEY
 		) as IClaims;
 		return decoded.id;
 	}
 
 	public getUserRole(request: Request): string {
-		const decoded: IClaims = jwt.verify(
+		const decoded: IClaims = jwt.decode(
 			request.headers.authorization.split(' ')[1],
-			SECRET_KEY
 		) as IClaims;
 		return decoded.role;
 	}
