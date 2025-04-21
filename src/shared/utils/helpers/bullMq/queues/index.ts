@@ -18,6 +18,7 @@ export const publishQueuesAsync = <T extends Object>(
 	return queue.add(jobName, data as T, {
 		removeOnComplete: true,
 		removeOnFail: true,
+    attempts:3
 	});
 };
 
