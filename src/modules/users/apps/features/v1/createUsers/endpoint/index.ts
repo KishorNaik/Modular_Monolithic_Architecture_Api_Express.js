@@ -431,12 +431,12 @@ export class CreateUserCommandHandler
 
 			// Domain Event Service (Background Job)
 			// Is Email Verification Notification Integration Event
-			await publishQueuesAsync(userCreatedDomainEventQueues, `send-email-verification`, {
+			await publishQueuesAsync<IUserCreatedDomainEventQueueJob>(userCreatedDomainEventQueues, `send-email-verification`, {
 				identifier: entity.entity.users.identifier,
 				email: entity.entity.communication.email,
 				fullName: `${entity.entity.users.firstName} ${entity.entity.users.lastName}`,
 				token: entity.entity.settings.emailVerificationToken,
-			} as IUserCreatedDomainEventQueueJob);
+			});
 
 			return DataResponseFactory.Response(
 				true,
@@ -494,7 +494,7 @@ const userCreatedDomainEventWorkers = runWorkers(`userCreatedDomainEventQueues`,
 	);
 });
 
-// Handle errors
+// Events
 userCreatedDomainEventWorkers.on('failed', (job, err) => {
 	logger.error(
 		logConstruct(
@@ -502,6 +502,16 @@ userCreatedDomainEventWorkers.on('failed', (job, err) => {
 			'worker',
 			`Job:${job.id} failed for UserId:${job.data?.identifier}`,
 			err
+		)
+	);
+});
+
+userCreatedDomainEventWorkers.on('completed', (job) => {
+	logger.info(
+		logConstruct(
+			'userCreatedDomainEventWorkers',
+			'worker',
+			`Job:${job.id} completed for UserId:${job.data?.identifier}`
 		)
 	);
 });
