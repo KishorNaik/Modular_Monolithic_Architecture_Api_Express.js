@@ -43,7 +43,7 @@ export class GetUsersByIdentifierController {
 	@HttpCode(StatusCodes.OK)
 	@OnUndefined(StatusCodes.NOT_FOUND)
 	@OnUndefined(StatusCodes.BAD_REQUEST)
-	@UseBefore(authenticateHmac, authenticateJwt,authorizeRole(RoleEnum.USER))
+	@UseBefore(authenticateHmac, authenticateJwt, authorizeRole(RoleEnum.USER))
 	public async get(
 		@Param('identifier') identifier: string,
 		@Req() req: Request,
