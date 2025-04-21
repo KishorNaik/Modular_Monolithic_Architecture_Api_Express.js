@@ -89,7 +89,7 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 			//const cacheValue: string = cacheValueResult;
 			const cacheValue: string = cacheValueResult.value;
 			if (!cacheValue) {
-				// Get User Data By Identifier
+				// User Set Cache
 				const userSetCacheServiceResult = await this._userSetCacheService.handleAsync({
 					identifier: identifier,
 					status: status,
@@ -126,7 +126,7 @@ export class UserSharedCacheService implements IUserSharedCacheService {
 					userRowVersionServiceResult.value;
 
 				if (userRowVersionResult.version !== user.version) {
-					// Get User Data By Identifier
+					// User Set Cache
 					const userSetCacheServiceResult = await this._userSetCacheService.handleAsync({
 						identifier: identifier,
 						status: status,
