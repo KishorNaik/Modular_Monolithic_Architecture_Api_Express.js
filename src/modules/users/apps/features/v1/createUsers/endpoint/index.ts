@@ -431,12 +431,16 @@ export class CreateUserCommandHandler
 
 			// Domain Event Service (Background Job)
 			// Is Email Verification Notification Integration Event
-			await publishQueuesAsync<IUserCreatedDomainEventQueueJob>(userCreatedDomainEventQueues, `send-email-verification`, {
-				identifier: entity.entity.users.identifier,
-				email: entity.entity.communication.email,
-				fullName: `${entity.entity.users.firstName} ${entity.entity.users.lastName}`,
-				token: entity.entity.settings.emailVerificationToken,
-			});
+			await publishQueuesAsync<IUserCreatedDomainEventQueueJob>(
+				userCreatedDomainEventQueues,
+				`send-email-verification`,
+				{
+					identifier: entity.entity.users.identifier,
+					email: entity.entity.communication.email,
+					fullName: `${entity.entity.users.firstName} ${entity.entity.users.lastName}`,
+					token: entity.entity.settings.emailVerificationToken,
+				}
+			);
 
 			return DataResponseFactory.Response(
 				true,
