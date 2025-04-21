@@ -29,8 +29,7 @@ export interface IMapUserSignInEntityService
 @sealed
 @Service()
 export class MapUserSignInEntityService implements IMapUserSignInEntityService {
-
-  private readonly _mapRefreshTokenUserEntityService:MapRefreshTokenUserEntityService;
+	private readonly _mapRefreshTokenUserEntityService: MapRefreshTokenUserEntityService;
 
 	public async handleAsync(
 		params: IMapUserSignInEntityServiceParameters
@@ -51,22 +50,23 @@ export class MapUserSignInEntityService implements IMapUserSignInEntityService {
 
 			const { refreshToken, users } = params;
 
-      const mapRefreshTokenUserEntityServiceResult = await this._mapRefreshTokenUserEntityService.handleAsync({
-        refreshToken,
-        users,
-      });
-      if (mapRefreshTokenUserEntityServiceResult.isErr())
-        return ResultExceptionFactory.error(
-          mapRefreshTokenUserEntityServiceResult.error.status,
-          mapRefreshTokenUserEntityServiceResult.error.message
-        );
+			const mapRefreshTokenUserEntityServiceResult =
+				await this._mapRefreshTokenUserEntityService.handleAsync({
+					refreshToken,
+					users,
+				});
+			if (mapRefreshTokenUserEntityServiceResult.isErr())
+				return ResultExceptionFactory.error(
+					mapRefreshTokenUserEntityServiceResult.error.status,
+					mapRefreshTokenUserEntityServiceResult.error.message
+				);
 
-      const result: IMapUserSignInEntityServiceResults = {
-        entity: {
-          userEntity: mapRefreshTokenUserEntityServiceResult.value.entity.userEntity,
-          keys: mapRefreshTokenUserEntityServiceResult.value.entity.keys,
-        },
-      };
+			const result: IMapUserSignInEntityServiceResults = {
+				entity: {
+					userEntity: mapRefreshTokenUserEntityServiceResult.value.entity.userEntity,
+					keys: mapRefreshTokenUserEntityServiceResult.value.entity.keys,
+				},
+			};
 
 			return new Ok(result);
 		} catch (ex) {

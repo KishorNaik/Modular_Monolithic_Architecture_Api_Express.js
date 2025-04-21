@@ -22,11 +22,10 @@ export interface IUserSignInUpdateService
 @sealed
 @Service()
 export class UserSignInUpdateDbService implements IUserSignInUpdateService {
-
-  private readonly _updateRefreshTokenDbService:UpdateRefreshTokenDbService;
+	private readonly _updateRefreshTokenDbService: UpdateRefreshTokenDbService;
 
 	public constructor() {
-    this._updateRefreshTokenDbService=Container.get(UpdateRefreshTokenDbService);
+		this._updateRefreshTokenDbService = Container.get(UpdateRefreshTokenDbService);
 	}
 
 	public async handleAsync(
@@ -47,15 +46,18 @@ export class UserSignInUpdateDbService implements IUserSignInUpdateService {
 			const queryRunner = params.queryRunner;
 
 			//Update User Key Entity
-      const updateRefreshTokenResult = await this._updateRefreshTokenDbService.handleAsync({
-        entity:{
-          userEntity: userEntity,
-          userKeys: userKeys,
-        },
-        queryRunner: queryRunner
-      });
-      if(updateRefreshTokenResult.isErr())
-        return ResultExceptionFactory.error(updateRefreshTokenResult.error.status,updateRefreshTokenResult.error.message);
+			const updateRefreshTokenResult = await this._updateRefreshTokenDbService.handleAsync({
+				entity: {
+					userEntity: userEntity,
+					userKeys: userKeys,
+				},
+				queryRunner: queryRunner,
+			});
+			if (updateRefreshTokenResult.isErr())
+				return ResultExceptionFactory.error(
+					updateRefreshTokenResult.error.status,
+					updateRefreshTokenResult.error.message
+				);
 
 			return new Ok(undefined);
 		} catch (ex) {
