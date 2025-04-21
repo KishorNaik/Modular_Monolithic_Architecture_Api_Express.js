@@ -24,7 +24,7 @@ import Container from 'typedi';
 import { logConstruct, logger } from '@/shared/utils/helpers/loggers';
 import { GetUserByIdentifierRequestDto, GetUserByIdentifierResponseDto } from '../contracts/Index';
 import { UserTokenProviderService } from '@/shared/services/users/userTokenProvider.service';
-import { authenticateJwt } from '@/middlewares/auth.middleware';
+import { authenticateJwt, authorizeRole } from '@/middlewares/auth.middleware';
 import { GetUserByIdentifierService } from './services/getUsersByIdentifier';
 import { StatusEnum } from '@kishornaik/mma_db';
 import { IUsers } from '@/modules/users/shared/types';
@@ -32,6 +32,7 @@ import { GetUserByIdentifierValidationRequestService } from './services/validati
 import { GetUsersByIdentifierResponseMapperService } from './services/mapResponse';
 import { GetUsersByIdentifierResponseEncryptService } from './services/encryptResponse';
 import { authenticateHmac } from '@/middlewares/hmac.middlware';
+import { RoleEnum } from '@/shared/models/enums/role.enum';
 
 // @region Controller
 @JsonController('/api/v1/users')
@@ -42,7 +43,7 @@ export class GetUsersByIdentifierController {
 	@HttpCode(StatusCodes.OK)
 	@OnUndefined(StatusCodes.NOT_FOUND)
 	@OnUndefined(StatusCodes.BAD_REQUEST)
-	@UseBefore(authenticateHmac, authenticateJwt)
+	@UseBefore(authenticateHmac, authenticateJwt,authorizeRole(RoleEnum.USER))
 	public async get(
 		@Param('identifier') identifier: string,
 		@Req() req: Request,
