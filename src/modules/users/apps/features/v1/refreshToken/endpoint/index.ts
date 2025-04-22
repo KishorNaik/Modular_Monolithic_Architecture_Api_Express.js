@@ -61,7 +61,7 @@ export class UpdateRefreshTokenController {
 	@HttpCode(StatusCodes.OK)
 	@OnUndefined(StatusCodes.NOT_FOUND)
 	@OnUndefined(StatusCodes.BAD_REQUEST)
-	@UseBefore(authenticateHmac,ValidationMiddleware(AesRequestDto))
+	@UseBefore(authenticateHmac, ValidationMiddleware(AesRequestDto))
 	public async updateRefreshToken(
 		@Body() request: AesRequestDto,
 		@Req() req: Request,

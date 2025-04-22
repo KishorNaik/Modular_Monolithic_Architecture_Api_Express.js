@@ -50,10 +50,15 @@ export class IsValidJwtAndRefreshTokenService implements IsJwtAndRefreshTokenSer
 					`unauthorized access`
 				);
 
-      // Get User Id by access token and refresh Token
-			const getUserIdByAccessTokenResultPromise =this._userTokenProviderService.getUserIdByJwtToken(accessToken);
-      const getUserIdByRefreshTokenResultPromise=this._userTokenProviderService.getUserIdByJwtToken(refreshToken);
-      const [getUserIdAccessTokenResult, getUserIdRefreshTokenResult] = await Promise.all([getUserIdByAccessTokenResultPromise, getUserIdByRefreshTokenResultPromise])
+			// Get User Id by access token and refresh Token
+			const getUserIdByAccessTokenResultPromise =
+				this._userTokenProviderService.getUserIdByJwtToken(accessToken);
+			const getUserIdByRefreshTokenResultPromise =
+				this._userTokenProviderService.getUserIdByJwtToken(refreshToken);
+			const [getUserIdAccessTokenResult, getUserIdRefreshTokenResult] = await Promise.all([
+				getUserIdByAccessTokenResultPromise,
+				getUserIdByRefreshTokenResultPromise,
+			]);
 
 			// Check if user id is matched or not by access token
 			let isUserIdMatched = getUserIdAccessTokenResult === params.users.identifier;
@@ -63,13 +68,13 @@ export class IsValidJwtAndRefreshTokenService implements IsJwtAndRefreshTokenSer
 					`unauthorized access`
 				);
 
-      // Check if user is matched or not by refresh token
-      isUserIdMatched=getUserIdRefreshTokenResult===params.users.identifier;
-      if (!isUserIdMatched)
-        return ResultExceptionFactory.error(
-          StatusCodes.UNAUTHORIZED,
-          `unauthorized access`
-        );
+			// Check if user is matched or not by refresh token
+			isUserIdMatched = getUserIdRefreshTokenResult === params.users.identifier;
+			if (!isUserIdMatched)
+				return ResultExceptionFactory.error(
+					StatusCodes.UNAUTHORIZED,
+					`unauthorized access`
+				);
 
 			return new Ok(undefined);
 		} catch (ex) {
