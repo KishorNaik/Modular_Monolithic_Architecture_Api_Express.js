@@ -5,13 +5,11 @@ import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 export class RefreshTokenRequestDto {
 	@IsString()
 	@IsNotEmpty()
-	@IsUUID()
 	@Type(() => String)
 	public accessToken: string;
 
 	@IsString()
 	@IsNotEmpty()
-	@IsUUID()
 	@Type(() => String)
 	public refreshToken: string;
 }

@@ -6,6 +6,7 @@ import {
 	JsonController,
 	OnUndefined,
 	Param,
+	Patch,
 	Put,
 	Req,
 	Res,
@@ -55,12 +56,12 @@ import { UpdateRefreshTokenEncryptResponseService } from './services/encryptResp
 @JsonController('/api/v1/users')
 @OpenAPI({ tags: ['users'] })
 export class UpdateRefreshTokenController {
-	@Put('/refresh-token')
+	@Patch('/refresh-token')
 	@OpenAPI({ summary: `update refresh token`, tags: ['users'] })
 	@HttpCode(StatusCodes.OK)
 	@OnUndefined(StatusCodes.NOT_FOUND)
 	@OnUndefined(StatusCodes.BAD_REQUEST)
-	@UseBefore(ValidationMiddleware(AesRequestDto), authenticateHmac)
+	@UseBefore(authenticateHmac,ValidationMiddleware(AesRequestDto))
 	public async updateRefreshToken(
 		@Body() request: AesRequestDto,
 		@Req() req: Request,
