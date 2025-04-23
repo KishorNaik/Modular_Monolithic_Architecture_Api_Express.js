@@ -129,7 +129,7 @@ export class GetUserQueryHandler
 				},
 				status: StatusEnum.ACTIVE,
 				filterBy: {
-					text: request?.filter ?? "",
+					text: request?.filter ?? '',
 				},
 				sortBy: {
 					by: [

@@ -19,8 +19,7 @@ const appInstance = new App([...modulesFederation]);
 const app = appInstance.getServer();
 
 describe(`Get Users Integration Test`, () => {
-
-  beforeEach(async () => {
+	beforeEach(async () => {
 		await initializeDatabase();
 	});
 
@@ -28,7 +27,7 @@ describe(`Get Users Integration Test`, () => {
 		await destroyDatabase();
 	});
 
-  // node --trace-deprecation --test --test-name-pattern='should_return_false_when_any_query_is_provided' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/getUsers/index.test.ts
+	// node --trace-deprecation --test --test-name-pattern='should_return_false_when_any_query_is_provided' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/getUsers/index.test.ts
 	it(`should_return_false_when_any_query_is_provided`, async () => {
 		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
@@ -56,7 +55,7 @@ describe(`Get Users Integration Test`, () => {
 			.set('x-auth-signature', signature)
 			.set('x-client-id', clientId)
 			.set('authorization', `Bearer ${token}`);
-			//.send(payload);
+		//.send(payload);
 
 		expect(response.status).toBe(400);
 		// setTimeout(() => {
@@ -64,7 +63,7 @@ describe(`Get Users Integration Test`, () => {
 		// }, 2000);
 	});
 
-  // node --trace-deprecation --test --test-name-pattern='should_return_true_when_pagination_is_provided' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/getUsers/index.test.ts
+	// node --trace-deprecation --test --test-name-pattern='should_return_true_when_pagination_is_provided' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/getUsers/index.test.ts
 	it(`should_return_true_when_pagination_is_provided`, async () => {
 		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
@@ -92,7 +91,7 @@ describe(`Get Users Integration Test`, () => {
 			.set('x-auth-signature', signature)
 			.set('x-client-id', clientId)
 			.set('authorization', `Bearer ${token}`);
-			//.send(payload);
+		//.send(payload);
 
 		expect(response.status).toBe(200);
 		// setTimeout(() => {
@@ -100,7 +99,7 @@ describe(`Get Users Integration Test`, () => {
 		// }, 2000);
 	});
 
-  // node --trace-deprecation --test --test-name-pattern='should_return_true_when_filter_is_provided' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/getUsers/index.test.ts
+	// node --trace-deprecation --test --test-name-pattern='should_return_true_when_filter_is_provided' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/getUsers/index.test.ts
 	it(`should_return_true_when_filter_is_provided`, async () => {
 		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
@@ -128,7 +127,7 @@ describe(`Get Users Integration Test`, () => {
 			.set('x-auth-signature', signature)
 			.set('x-client-id', clientId)
 			.set('authorization', `Bearer ${token}`);
-			//.send(payload);
+		//.send(payload);
 
 		expect(response.status).toBe(200);
 		// setTimeout(() => {
