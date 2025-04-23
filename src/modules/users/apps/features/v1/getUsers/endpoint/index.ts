@@ -108,7 +108,7 @@ export class GetUserQueryHandler
 			if (!value.request)
 				return DataResponseFactory.error(StatusCodes.BAD_REQUEST, 'Invalid request');
 
-			if (value.expressRequest)
+			if (!value.expressRequest)
 				return DataResponseFactory.error(
 					StatusCodes.BAD_REQUEST,
 					'Invalid express request'
@@ -129,7 +129,7 @@ export class GetUserQueryHandler
 				},
 				status: StatusEnum.ACTIVE,
 				filterBy: {
-					text: request.filter,
+					text: request?.filter ?? "",
 				},
 				sortBy: {
 					by: [
