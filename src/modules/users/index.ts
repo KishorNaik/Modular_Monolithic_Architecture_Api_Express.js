@@ -37,5 +37,5 @@ export const userModule: Function[] = [
 	UserSignInController,
 	GetUsersByIdentifierController,
 	UpdateRefreshTokenController,
-  GetUsersController
+	GetUsersController,
 ];
