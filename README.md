@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project demonstrates a modular monolithic architecture using Express.js. It aims to showcase a scalable and maintainable approach to building monolithic applications with modular components.
+This sample project demonstrates a modular monolithic architecture using Express.js. It aims to showcase a scalable and maintainable approach to building monolithic applications with modular components.
 
 ## Features
 
