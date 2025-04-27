@@ -68,7 +68,7 @@ export class CreateUserController {
 
 // @region Command
 @sealed
-export class CreateUserCommand extends RequestData<ApiDataResponse<AesResponseDto>> {
+class CreateUserCommand extends RequestData<ApiDataResponse<AesResponseDto>> {
 	private readonly _request: AesRequestDto;
 
 	public constructor(request: AesRequestDto) {
@@ -86,7 +86,7 @@ export class CreateUserCommand extends RequestData<ApiDataResponse<AesResponseDt
 
 @sealed
 @requestHandler(CreateUserCommand)
-export class CreateUserCommandHandler
+class CreateUserCommandHandler
 	implements RequestHandler<CreateUserCommand, ApiDataResponse<AesResponseDto>>
 {
 	private readonly _createUserDecryptRequestService: CreateUserDecryptRequestService;

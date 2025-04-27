@@ -13,6 +13,7 @@ import { UserSignInController } from './apps/features/v1/signIn';
 import { GetUsersByIdentifierController } from './apps/features/v1/getUsersByIdentifier';
 import { UpdateRefreshTokenController } from './apps/features/v1/refreshToken';
 import { GetUsersController } from './apps/features/v1/getUsers/endpoint';
+import { UpdateUserController } from './apps/features/v1/updateUsers';
 
 Container.set<UpdateUserSettingsService>(
 	UpdateUserSettingsService,
@@ -38,4 +39,5 @@ export const userModule: Function[] = [
 	GetUsersByIdentifierController,
 	UpdateRefreshTokenController,
 	GetUsersController,
+  UpdateUserController
 ];
