@@ -22,7 +22,7 @@ const appInstance = new App([...modulesFederation]);
 const app = appInstance.getServer();
 
 describe(`Update Users Integration Test`, () => {
-  beforeEach(async () => {
+	beforeEach(async () => {
 		await initializeDatabase();
 	});
 
@@ -30,238 +30,233 @@ describe(`Update Users Integration Test`, () => {
 		await destroyDatabase();
 	});
 
-  // node --trace-deprecation --test --test-name-pattern='should_return_false_when_body_is_empty' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
-  it(`should_return_false_when_body_is_empty`,async ()=>{
-    // HMAC Auth
+	// node --trace-deprecation --test --test-name-pattern='should_return_false_when_body_is_empty' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
+	it(`should_return_false_when_body_is_empty`, async () => {
+		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
 		const hmacSecretKey: string = '66898044-0df2-d050-cc10-a6a5b73c3b5b';
 		const aesSecretKey: string = 'RWw5ejc0Wzjq0i0T2ZTZhcYu44fQI5M7';
 		const userId: string = 'e30ff63e-caa1-5dc0-99a5-504f14e55317';
 
-    // Jwt Auth
-    const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
-      expiresIn: '1h',
-    });
+		// Jwt Auth
+		const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
+			expiresIn: '1h',
+		});
 
-    const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
-    updateUserRequestDto.identifier="";
-    updateUserRequestDto.firstName="";
-    updateUserRequestDto.lastName="";
-    updateUserRequestDto.email="";
-    updateUserRequestDto.mobileNo="";
+		const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
+		updateUserRequestDto.identifier = '';
+		updateUserRequestDto.firstName = '';
+		updateUserRequestDto.lastName = '';
+		updateUserRequestDto.email = '';
+		updateUserRequestDto.mobileNo = '';
 
-    const aes = new AES(aesSecretKey);
-    const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
+		const aes = new AES(aesSecretKey);
+		const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
 
-    const aesRequestDto: AesRequestDto = new AesRequestDto();
-    aesRequestDto.body = "";
+		const aesRequestDto: AesRequestDto = new AesRequestDto();
+		aesRequestDto.body = '';
 
-    const endpoint = `/api/v1/users`;
+		const endpoint = `/api/v1/users`;
 
-    const payload = aesRequestDto;
+		const payload = aesRequestDto;
 		const signatureResult = generateHmac(JSON.stringify(payload), hmacSecretKey);
-    if (signatureResult.isErr()) {
+		if (signatureResult.isErr()) {
 			expect(signatureResult.isErr()).toBe(false);
 			return;
 		}
 		const signature = signatureResult.value;
 
-    const response = await request(app)
-    .put(endpoint)
-    .set('x-auth-signature', signature)
-    .set('x-client-id', clientId)
-    .set('authorization', `Bearer ${token}`)
-    .send(payload);
+		const response = await request(app)
+			.put(endpoint)
+			.set('x-auth-signature', signature)
+			.set('x-client-id', clientId)
+			.set('authorization', `Bearer ${token}`)
+			.send(payload);
 
-    expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+		expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+	});
 
-  })
-
-  // node --trace-deprecation --test --test-name-pattern='should_return_false_when_aesToken_passed_wrong' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
-  it(`should_return_false_when_aesToken_passed_wrong`,async ()=>{
-    // HMAC Auth
+	// node --trace-deprecation --test --test-name-pattern='should_return_false_when_aesToken_passed_wrong' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
+	it(`should_return_false_when_aesToken_passed_wrong`, async () => {
+		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
 		const hmacSecretKey: string = '66898044-0df2-d050-cc10-a6a5b73c3b5b';
 		const aesSecretKey: string = 'RWw5ejc0Wzjq0i0T2ZTZhcYu44fQI5M8'; // Wrong
 		const userId: string = 'e30ff63e-caa1-5dc0-99a5-504f14e55317';
 
-    // Jwt Auth
-    const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
-      expiresIn: '1h',
-    });
+		// Jwt Auth
+		const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
+			expiresIn: '1h',
+		});
 
-    const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
-    updateUserRequestDto.identifier="";
-    updateUserRequestDto.firstName="";
-    updateUserRequestDto.lastName="";
-    updateUserRequestDto.email="";
-    updateUserRequestDto.mobileNo="";
+		const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
+		updateUserRequestDto.identifier = '';
+		updateUserRequestDto.firstName = '';
+		updateUserRequestDto.lastName = '';
+		updateUserRequestDto.email = '';
+		updateUserRequestDto.mobileNo = '';
 
-    const aes = new AES(aesSecretKey);
-    const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
+		const aes = new AES(aesSecretKey);
+		const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
 
-    const aesRequestDto: AesRequestDto = new AesRequestDto();
-    aesRequestDto.body = encryptRequestBody;
+		const aesRequestDto: AesRequestDto = new AesRequestDto();
+		aesRequestDto.body = encryptRequestBody;
 
-    const endpoint = `/api/v1/users`;
+		const endpoint = `/api/v1/users`;
 
-    const payload = aesRequestDto;
+		const payload = aesRequestDto;
 		const signatureResult = generateHmac(JSON.stringify(payload), hmacSecretKey);
-    if (signatureResult.isErr()) {
+		if (signatureResult.isErr()) {
 			expect(signatureResult.isErr()).toBe(false);
 			return;
 		}
 		const signature = signatureResult.value;
 
-    const response = await request(app)
-    .put(endpoint)
-    .set('x-auth-signature', signature)
-    .set('x-client-id', clientId)
-    .set('authorization', `Bearer ${token}`)
-    .send(payload);
+		const response = await request(app)
+			.put(endpoint)
+			.set('x-auth-signature', signature)
+			.set('x-client-id', clientId)
+			.set('authorization', `Bearer ${token}`)
+			.send(payload);
 
-    expect(response.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
+		expect(response.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
+	});
 
-  })
-
-  // node --trace-deprecation --test --test-name-pattern='should_return_false_when_userid_passed_wrong' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
-  it(`should_return_false_when_userid_passed_wrong`,async ()=>{
-    // HMAC Auth
+	// node --trace-deprecation --test --test-name-pattern='should_return_false_when_userid_passed_wrong' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
+	it(`should_return_false_when_userid_passed_wrong`, async () => {
+		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
 		const hmacSecretKey: string = '66898044-0df2-d050-cc10-a6a5b73c3b5b';
 		const aesSecretKey: string = 'RWw5ejc0Wzjq0i0T2ZTZhcYu44fQI5M7';
 		const userId: string = 'e30ff63e-caa1-5dc0-99a5-504f14e55318'; // Wrong
 
-    // Jwt Auth
-    const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
-      expiresIn: '1h',
-    });
+		// Jwt Auth
+		const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
+			expiresIn: '1h',
+		});
 
-    const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
-    updateUserRequestDto.identifier=userId;
-    updateUserRequestDto.firstName="";
-    updateUserRequestDto.lastName="";
-    updateUserRequestDto.email="";
-    updateUserRequestDto.mobileNo="";
+		const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
+		updateUserRequestDto.identifier = userId;
+		updateUserRequestDto.firstName = '';
+		updateUserRequestDto.lastName = '';
+		updateUserRequestDto.email = '';
+		updateUserRequestDto.mobileNo = '';
 
-    const aes = new AES(aesSecretKey);
-    const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
+		const aes = new AES(aesSecretKey);
+		const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
 
-    const aesRequestDto: AesRequestDto = new AesRequestDto();
-    aesRequestDto.body = encryptRequestBody;
+		const aesRequestDto: AesRequestDto = new AesRequestDto();
+		aesRequestDto.body = encryptRequestBody;
 
-    const endpoint = `/api/v1/users`;
+		const endpoint = `/api/v1/users`;
 
-    const payload = aesRequestDto;
+		const payload = aesRequestDto;
 		const signatureResult = generateHmac(JSON.stringify(payload), hmacSecretKey);
-    if (signatureResult.isErr()) {
+		if (signatureResult.isErr()) {
 			expect(signatureResult.isErr()).toBe(false);
 			return;
 		}
 		const signature = signatureResult.value;
 
-    const response = await request(app)
-    .put(endpoint)
-    .set('x-auth-signature', signature)
-    .set('x-client-id', clientId)
-    .set('authorization', `Bearer ${token}`)
-    .send(payload);
+		const response = await request(app)
+			.put(endpoint)
+			.set('x-auth-signature', signature)
+			.set('x-client-id', clientId)
+			.set('authorization', `Bearer ${token}`)
+			.send(payload);
 
-    expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+		expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+	});
 
-  })
-
-  // node --trace-deprecation --test --test-name-pattern='should_return_false_when_validation_service_failed' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
-  it(`should_return_false_when_validation_service_failed`,async ()=>{
-    // HMAC Auth
+	// node --trace-deprecation --test --test-name-pattern='should_return_false_when_validation_service_failed' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
+	it(`should_return_false_when_validation_service_failed`, async () => {
+		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
 		const hmacSecretKey: string = '66898044-0df2-d050-cc10-a6a5b73c3b5b';
 		const aesSecretKey: string = 'RWw5ejc0Wzjq0i0T2ZTZhcYu44fQI5M7';
 		const userId: string = 'e30ff63e-caa1-5dc0-99a5-504f14e55317';
 
-    // Jwt Auth
-    const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
-      expiresIn: '1h',
-    });
+		// Jwt Auth
+		const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
+			expiresIn: '1h',
+		});
 
-    const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
-    updateUserRequestDto.identifier=userId;
-    updateUserRequestDto.firstName="";
-    updateUserRequestDto.lastName="";
-    updateUserRequestDto.email="";
-    updateUserRequestDto.mobileNo="";
+		const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
+		updateUserRequestDto.identifier = userId;
+		updateUserRequestDto.firstName = '';
+		updateUserRequestDto.lastName = '';
+		updateUserRequestDto.email = '';
+		updateUserRequestDto.mobileNo = '';
 
-    const aes = new AES(aesSecretKey);
-    const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
+		const aes = new AES(aesSecretKey);
+		const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
 
-    const aesRequestDto: AesRequestDto = new AesRequestDto();
-    aesRequestDto.body = encryptRequestBody;
+		const aesRequestDto: AesRequestDto = new AesRequestDto();
+		aesRequestDto.body = encryptRequestBody;
 
-    const endpoint = `/api/v1/users`;
+		const endpoint = `/api/v1/users`;
 
-    const payload = aesRequestDto;
+		const payload = aesRequestDto;
 		const signatureResult = generateHmac(JSON.stringify(payload), hmacSecretKey);
-    if (signatureResult.isErr()) {
+		if (signatureResult.isErr()) {
 			expect(signatureResult.isErr()).toBe(false);
 			return;
 		}
 		const signature = signatureResult.value;
 
-    const response = await request(app)
-    .put(endpoint)
-    .set('x-auth-signature', signature)
-    .set('x-client-id', clientId)
-    .set('authorization', `Bearer ${token}`)
-    .send(payload);
+		const response = await request(app)
+			.put(endpoint)
+			.set('x-auth-signature', signature)
+			.set('x-client-id', clientId)
+			.set('authorization', `Bearer ${token}`)
+			.send(payload);
 
-    expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+		expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+	});
 
-  })
-
-   // node --trace-deprecation --test --test-name-pattern='should_return_true_when_all_services_passed' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
-   it(`should_return_true_when_all_services_passed`,async ()=>{
-    // HMAC Auth
+	// node --trace-deprecation --test --test-name-pattern='should_return_true_when_all_services_passed' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/updateUsers/index.test.ts
+	it(`should_return_true_when_all_services_passed`, async () => {
+		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
 		const hmacSecretKey: string = '66898044-0df2-d050-cc10-a6a5b73c3b5b';
 		const aesSecretKey: string = 'RWw5ejc0Wzjq0i0T2ZTZhcYu44fQI5M7';
 		const userId: string = 'e30ff63e-caa1-5dc0-99a5-504f14e55317';
 
-    // Jwt Auth
-    const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
-      expiresIn: '1h',
-    });
+		// Jwt Auth
+		const token = jwt.sign({ id: userId, role: RoleEnum.USER }, SECRET_KEY, {
+			expiresIn: '1h',
+		});
 
-    const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
-    updateUserRequestDto.identifier=userId;
-    updateUserRequestDto.firstName="eshaan";
-    updateUserRequestDto.lastName="naik";
-    updateUserRequestDto.email="eshaan.naik.dev62@gmail.com";
-    updateUserRequestDto.mobileNo="9167791162";
+		const updateUserRequestDto: UpdateUserRequestDto = new UpdateUserRequestDto();
+		updateUserRequestDto.identifier = userId;
+		updateUserRequestDto.firstName = 'eshaan';
+		updateUserRequestDto.lastName = 'naik';
+		updateUserRequestDto.email = 'eshaan.naik.dev62@gmail.com';
+		updateUserRequestDto.mobileNo = '9167791162';
 
-    const aes = new AES(aesSecretKey);
-    const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
+		const aes = new AES(aesSecretKey);
+		const encryptRequestBody = await aes.encryptAsync(JSON.stringify(updateUserRequestDto));
 
-    const aesRequestDto: AesRequestDto = new AesRequestDto();
-    aesRequestDto.body = encryptRequestBody;
+		const aesRequestDto: AesRequestDto = new AesRequestDto();
+		aesRequestDto.body = encryptRequestBody;
 
-    const endpoint = `/api/v1/users`;
+		const endpoint = `/api/v1/users`;
 
-    const payload = aesRequestDto;
+		const payload = aesRequestDto;
 		const signatureResult = generateHmac(JSON.stringify(payload), hmacSecretKey);
-    if (signatureResult.isErr()) {
+		if (signatureResult.isErr()) {
 			expect(signatureResult.isErr()).toBe(false);
 			return;
 		}
 		const signature = signatureResult.value;
 
-    const response = await request(app)
-    .put(endpoint)
-    .set('x-auth-signature', signature)
-    .set('x-client-id', clientId)
-    .set('authorization', `Bearer ${token}`)
-    .send(payload);
+		const response = await request(app)
+			.put(endpoint)
+			.set('x-auth-signature', signature)
+			.set('x-client-id', clientId)
+			.set('authorization', `Bearer ${token}`)
+			.send(payload);
 
-    expect(response.status).toBe(StatusCodes.OK);
-
-  })
+		expect(response.status).toBe(StatusCodes.OK);
+	});
 });
