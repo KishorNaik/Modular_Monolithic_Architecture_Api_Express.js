@@ -41,5 +41,5 @@ export const userModule: Function[] = [
 	UpdateRefreshTokenController,
 	GetUsersController,
 	UpdateUserController,
-  DeactivateUserController
+	DeactivateUserController,
 ];

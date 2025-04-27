@@ -22,7 +22,7 @@ const appInstance = new App([...modulesFederation]);
 const app = appInstance.getServer();
 
 describe(`deactivate Users Integration Test`, () => {
-  beforeEach(async () => {
+	beforeEach(async () => {
 		await initializeDatabase();
 	});
 
@@ -30,7 +30,7 @@ describe(`deactivate Users Integration Test`, () => {
 		await destroyDatabase();
 	});
 
-  // node --trace-deprecation --test --test-name-pattern='should_return_false_when_userid_passed_wrong' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/deactivateUser/index.test.ts
+	// node --trace-deprecation --test --test-name-pattern='should_return_false_when_userid_passed_wrong' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/deactivateUser/index.test.ts
 	it(`should_return_false_when_userid_passed_wrong`, async () => {
 		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
@@ -57,12 +57,12 @@ describe(`deactivate Users Integration Test`, () => {
 			.delete(endpoint)
 			.set('x-auth-signature', signature)
 			.set('x-client-id', clientId)
-			.set('authorization', `Bearer ${token}`)
+			.set('authorization', `Bearer ${token}`);
 
 		expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
 	});
 
-  // node --trace-deprecation --test --test-name-pattern='should_return_false_when_userid_is_not_uuid' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/deactivateUser/index.test.ts
+	// node --trace-deprecation --test --test-name-pattern='should_return_false_when_userid_is_not_uuid' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/deactivateUser/index.test.ts
 	it(`should_return_false_when_userid_is_not_uuid`, async () => {
 		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
@@ -89,12 +89,12 @@ describe(`deactivate Users Integration Test`, () => {
 			.delete(endpoint)
 			.set('x-auth-signature', signature)
 			.set('x-client-id', clientId)
-			.set('authorization', `Bearer ${token}`)
+			.set('authorization', `Bearer ${token}`);
 
 		expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
 	});
 
-   // node --trace-deprecation --test --test-name-pattern='should_return_true_when_all_service_passed' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/deactivateUser/index.test.ts
+	// node --trace-deprecation --test --test-name-pattern='should_return_true_when_all_service_passed' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/deactivateUser/index.test.ts
 	it(`should_return_true_when_all_service_passed`, async () => {
 		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
@@ -121,13 +121,12 @@ describe(`deactivate Users Integration Test`, () => {
 			.delete(endpoint)
 			.set('x-auth-signature', signature)
 			.set('x-client-id', clientId)
-			.set('authorization', `Bearer ${token}`)
+			.set('authorization', `Bearer ${token}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
 	});
 
-
-   // node --trace-deprecation --test --test-name-pattern='should_return_false_when_user_already_deactivated' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/deactivateUser/index.test.ts
+	// node --trace-deprecation --test --test-name-pattern='should_return_false_when_user_already_deactivated' --require ts-node/register -r tsconfig-paths/register ./src/modules/users/tests/integration/v1/deactivateUser/index.test.ts
 	it(`should_return_false_when_user_already_deactivated`, async () => {
 		// HMAC Auth
 		const clientId: string = '006dbdfb-0f56-42ae-2b1d-9c0e1adb4979';
@@ -154,10 +153,8 @@ describe(`deactivate Users Integration Test`, () => {
 			.delete(endpoint)
 			.set('x-auth-signature', signature)
 			.set('x-client-id', clientId)
-			.set('authorization', `Bearer ${token}`)
+			.set('authorization', `Bearer ${token}`);
 
 		expect(response.status).toBe(StatusCodes.NOT_FOUND);
 	});
-
-
 });
