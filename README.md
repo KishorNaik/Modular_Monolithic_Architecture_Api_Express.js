@@ -10,6 +10,7 @@ This sample project demonstrates a modular monolithic architecture using Express
 - Event-driven architecture, enabling asynchronous operations and decoupled communication
 - Adherence to SOLID principles to ensure clean and maintainable code
 - Separation of concerns using independent modules
+- AES encryption and decryption implementation for secure data transmission ensuring confidentiality and integrity
 - JWT authentication with HMAC and role based authentication for secure and efficient token validation
 
 ## Technologies
