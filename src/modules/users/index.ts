@@ -14,6 +14,7 @@ import { GetUsersByIdentifierController } from './apps/features/v1/getUsersByIde
 import { UpdateRefreshTokenController } from './apps/features/v1/refreshToken';
 import { GetUsersController } from './apps/features/v1/getUsers/endpoint';
 import { UpdateUserController } from './apps/features/v1/updateUsers';
+import { DeactivateUserController } from './apps/features/v1/deactivateUser';
 
 Container.set<UpdateUserSettingsService>(
 	UpdateUserSettingsService,
@@ -40,4 +41,5 @@ export const userModule: Function[] = [
 	UpdateRefreshTokenController,
 	GetUsersController,
 	UpdateUserController,
+  DeactivateUserController
 ];
