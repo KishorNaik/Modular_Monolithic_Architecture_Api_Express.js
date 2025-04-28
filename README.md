@@ -16,7 +16,7 @@ This sample project demonstrates a modular monolithic architecture using Express
 ## Technologies
 
 - Node.js (Runtime)
-- Express.js (Web framework)
+- Express.js (Web framework) + Typescript (language)
 - PostgreSQL (Database)
 - Redis Cache
 - BullMq
